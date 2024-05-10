@@ -258,6 +258,29 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
         });
     }
 
+    private void getJobCard(){
+        String url = References.GetShift.methodName;
+        Request request = new Request.Builder()
+                .url(url)
+                .build();
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                if (response.isSuccessful()){
+                    String body = response.body().string();
+
+                }else {
+
+                }
+            }
+        });
+    }
+
     private void datePick(){
         Calendar calendar = Calendar.getInstance();
         int YEAR = calendar.get(Calendar.YEAR);

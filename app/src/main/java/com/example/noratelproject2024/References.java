@@ -12,4 +12,8 @@ public class References {
     public static class GetShift {
         public static String methodName = url + "GetShift";
     }
+    public static class GetJobCard {
+        public static String methodName = url + "GetJobCards?";
+    }
+
 }
