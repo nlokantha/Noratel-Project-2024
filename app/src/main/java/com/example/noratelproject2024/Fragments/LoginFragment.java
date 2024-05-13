@@ -14,10 +14,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.example.noratelproject2024.Controls.Methods;
 import com.example.noratelproject2024.References;
 import com.example.noratelproject2024.databinding.FragmentLoginBinding;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -45,7 +50,6 @@ public class LoginFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         binding.editTextUserName.setText("test");
         binding.editTextPassword.setText("test123");
-
 
         binding.buttonLogin.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -148,6 +152,7 @@ public class LoginFragment extends Fragment {
         });
     }
 
+
     LoginFragmentListener mListener;
 
     @Override
@@ -158,8 +163,6 @@ public class LoginFragment extends Fragment {
 
     public interface LoginFragmentListener {
         void authSuccessful();
-
-
     }
 
 

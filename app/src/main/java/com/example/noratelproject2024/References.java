@@ -13,7 +13,10 @@ public class References {
         public static String methodName = url + "GetShift";
     }
     public static class GetJobCard {
-        public static String methodName = url + "GetJobCards?";
+        public static String methodName = url + "GetJobCards";
+    }
+    public static class GetJobCardDetail {
+        public static String methodName = url + "GetJobCardDetail?jobSrNo=";
     }
 
 }
