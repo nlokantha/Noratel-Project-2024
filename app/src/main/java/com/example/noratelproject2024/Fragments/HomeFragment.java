@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -225,6 +226,7 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
         builder.setView(view);
 
         alertselectJobCard = builder.create();
+        alertselectJobCard.getWindow().setGravity(Gravity.BOTTOM);
         alertselectJobCard.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT);
         alertselectJobCard.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         alertselectJobCard.show();
