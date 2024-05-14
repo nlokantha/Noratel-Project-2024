@@ -37,6 +37,9 @@ import com.example.noratelproject2024.References;
 import com.example.noratelproject2024.databinding.FragmentHomeBinding;
 import com.google.gson.Gson;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -46,6 +49,7 @@ import java.util.Calendar;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
+import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -300,7 +304,11 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
         buttonConfirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SaveJobCard();
+                try {
+                    SaveJobCard();
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
                 alertDialog.dismiss();
             }
         });
@@ -506,18 +514,21 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
         }
     }
 
-    private void SaveJobCard(){
+    private void SaveJobCard() throws JSONException {
         String quantity = binding.editTextQuantity.getText().toString();
         String url = References.SaveJobCard.methodName;
-        RequestBody formBody = new FormBody.Builder()
-                .add("JobSrNo", mJobCard.getJC_Serial_No())
-                .add("QtyCompleted", quantity)
-                .add("Status", mJobCard.getStatus())
-                .add("Username", mUser.getUsername())
-                .build();
+
+        JSONObject jsonBody = new JSONObject();
+
+        jsonBody.put("JobSrNo", mJobCard.getJC_Serial_No());
+        jsonBody.put("QtyCompleted", quantity);
+        jsonBody.put("Status", mJobCard.getStatus());
+        jsonBody.put("Username", mUser.getUsername());
+
+        RequestBody requestBody = RequestBody.create(jsonBody.toString(), MediaType.parse("application/json"));
         Request request = new Request.Builder()
                 .url(url)
-                .post(formBody)
+                .post(requestBody)
                 .build();
         client.newCall(request).enqueue(new Callback() {
             @Override
@@ -529,6 +540,7 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (response.isSuccessful()){
                     String body = response.body().string();
+                    Log.d(TAG, "onResponse: POST "+body);
 
                 }else {
 
