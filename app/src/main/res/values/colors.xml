@@ -5,4 +5,7 @@
 
     <color name="blue">#1f6eaf</color>
     <color name="light_red">#ff5963</color>
+    <color name="light_green">#249689</color>
+    <color name="light_yellow">#D8A714</color>
+    <color name="light_blue">#1F6EAF</color>
 </resources>

@@ -15,8 +15,10 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.noratelproject2024.Controls.Methods;
+import com.example.noratelproject2024.Models.User;
 import com.example.noratelproject2024.References;
 import com.example.noratelproject2024.databinding.FragmentLoginBinding;
+import com.google.gson.Gson;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -76,8 +78,9 @@ public class LoginFragment extends Fragment {
                     public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                         if (response.isSuccessful()) {
                             String body = response.body().string();
-                            Log.d(TAG, "onResponse: " + body);
-                            if (body.equals("1")){
+                            Gson gson = new Gson();
+                            User user = gson.fromJson(body,User.class);
+                            if (user.getStatus().equals("1")){
                                 getActivity().runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
@@ -85,7 +88,13 @@ public class LoginFragment extends Fragment {
                                     }
                                 });
                             }else {
-                                mListener.authSuccessful();
+                                getActivity().runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        mListener.authSuccessful(user);
+                                    }
+                                });
+
                             }
                         } else {
                             Log.d(TAG, "onResponse: " + response.code());
@@ -121,7 +130,9 @@ public class LoginFragment extends Fragment {
                             if (response.isSuccessful()) {
                                 String body = response.body().string();
                                 Log.d(TAG, "onResponse: " + body);
-                                if (body.equals("1")){
+                                Gson gson = new Gson();
+                                User user = gson.fromJson(body,User.class);
+                                if (user.getStatus().equals("1")){
                                     getActivity().runOnUiThread(new Runnable() {
                                         @Override
                                         public void run() {
@@ -131,7 +142,12 @@ public class LoginFragment extends Fragment {
                                         }
                                     });
                                 }else {
-                                    mListener.authSuccessful();
+                                    getActivity().runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            mListener.authSuccessful(user);
+                                        }
+                                    });
                                 }
 
                             } else {
@@ -162,7 +178,7 @@ public class LoginFragment extends Fragment {
     }
 
     public interface LoginFragmentListener {
-        void authSuccessful();
+        void authSuccessful(User user);
     }
 
 

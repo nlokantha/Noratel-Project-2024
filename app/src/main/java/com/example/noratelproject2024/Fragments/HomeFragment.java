@@ -20,6 +20,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,6 +31,7 @@ import com.example.noratelproject2024.Models.JobCard;
 import com.example.noratelproject2024.Models.JobCardDetails;
 import com.example.noratelproject2024.Models.Lines;
 import com.example.noratelproject2024.Models.Shift;
+import com.example.noratelproject2024.Models.User;
 import com.example.noratelproject2024.R;
 import com.example.noratelproject2024.References;
 import com.example.noratelproject2024.databinding.FragmentHomeBinding;
@@ -43,14 +45,34 @@ import java.util.Calendar;
 
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShiftSelectedListener, SelectLineAdapter.OnLineSelectedListener, SelectJobCardAdapter.OnJobCardSelectedListener {
+    private static final String ARG_PARAM_USER = "ARG_PARAM_USER";
+    private User mUser;
     public HomeFragment() {
         // Required empty public constructor
     }
+    public static HomeFragment newInstance(User mUser) {
+        HomeFragment fragment = new HomeFragment();
+        Bundle args = new Bundle();
+        args.putSerializable(ARG_PARAM_USER, mUser);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            mUser = (User) getArguments().getSerializable(ARG_PARAM_USER);
+        }
+    }
+
     FragmentHomeBinding binding;
     private final OkHttpClient client = new OkHttpClient();
     private static final String TAG = "demo";
@@ -61,6 +83,7 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
     SelectShiftAdapter selectShiftAdapter;
     SelectJobCardAdapter selectJobCardAdapter;
     AlertDialog alertselectLine,alertselectShift,alertselectJobCard;
+    ProgressBar progressBarSelectShift,progressBarSearchJobCard,progressBarSelectLine;
 
     Shift mShift;
     Lines mLines;
@@ -100,6 +123,18 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
                 }else {
                     selectJobCardCustomDialog();
                 }
+            }
+        });
+        binding.buttonClear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+              clearEverything();
+            }
+        });
+        binding.buttonSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                saveJobCardWarning();
             }
         });
 
@@ -149,6 +184,12 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
         Button buttonChangeShift = view.findViewById(R.id.buttonChangeShift);
         TextView textViewSelectedLine = view.findViewById(R.id.textViewSelectedLine);
         TextView textViewSelectedShift = view.findViewById(R.id.textViewSelectedShift);
+        TextView textViewUserName = view.findViewById(R.id.textViewUserName);
+        if (mUser != null){
+            textViewUserName.setText(mUser.getUsername());
+        }else {
+            textViewUserName.setText("N/A");
+        }
 
         if (mLines != null){
             textViewSelectedLine.setText(mLines.getSUB_UNINAME());
@@ -197,6 +238,8 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
         alertselectLine.show();
 
         RecyclerView recyclerView = view.findViewById(R.id.recyclerView);
+        progressBarSelectLine=view.findViewById(R.id.progressBarSelectLine);
+        progressBarSelectLine.setVisibility(View.VISIBLE);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         selectLineAdapter = new SelectLineAdapter(linesArrayList,this);
         recyclerView.setAdapter(selectLineAdapter);
@@ -213,6 +256,8 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
         alertselectShift.show();
 
         RecyclerView recyclerView = view.findViewById(R.id.recyclerView);
+        progressBarSelectShift=view.findViewById(R.id.progressBarSelectShift);
+        progressBarSelectShift.setVisibility(View.VISIBLE);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         selectShiftAdapter = new SelectShiftAdapter(shiftArrayList,this);
         recyclerView.setAdapter(selectShiftAdapter);
@@ -232,9 +277,79 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
         alertselectJobCard.show();
 
         RecyclerView recyclerView = view.findViewById(R.id.recyclerView);
+        progressBarSearchJobCard=view.findViewById(R.id.progressBarSearchJobCard);
+        progressBarSearchJobCard.setVisibility(View.VISIBLE);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         selectJobCardAdapter = new SelectJobCardAdapter(jobCardArrayList,this);
         recyclerView.setAdapter(selectJobCardAdapter);
+    }
+
+    private void saveJobCardWarning(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+        View view = inflater.inflate(R.layout.custom_warning,null);
+        builder.setView(view);
+
+        AlertDialog alertDialog = builder.create();
+        alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        alertDialog.show();
+
+        Button buttonClose = view.findViewById(R.id.buttonClose);
+        Button buttonConfirm = view.findViewById(R.id.buttonConfirm);
+
+        buttonConfirm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SaveJobCard();
+                alertDialog.dismiss();
+            }
+        });
+
+        buttonClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alertDialog.dismiss();
+            }
+        });
+
+    }
+    private void clearEverything(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+        View view = inflater.inflate(R.layout.custom_warning,null);
+        builder.setView(view);
+
+        AlertDialog alertDialog = builder.create();
+        alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        alertDialog.show();
+
+        Button buttonClose = view.findViewById(R.id.buttonClose);
+        Button buttonConfirm = view.findViewById(R.id.buttonConfirm);
+
+        buttonConfirm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                binding.buttonJobCard.setText("-Not Selected-");
+                binding.buttonDatePicker.setText("");
+                binding.editTextJobNo.setText("");
+                binding.editTextOperations.setText("");
+                binding.editTextEmployees.setText("");
+                binding.editTextLastRecorded.setText("");
+                binding.editTextTarg.setText("");
+                binding.editTextComp.setText("");
+                binding.editTextQuantity.setText("0");
+                binding.editTextSerialNumber.setText("");
+                alertDialog.dismiss();
+            }
+        });
+
+        buttonClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alertDialog.dismiss();
+            }
+        });
+
     }
 
     private void getLines() {
@@ -252,6 +367,7 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (response.isSuccessful()) {
+
                     String body = response.body().string();
                     Log.d(TAG, "onResponse: " + body);
                     Gson gson = new Gson();
@@ -261,6 +377,7 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+                            progressBarSelectLine.setVisibility(View.GONE);
                             selectLineAdapter.notifyDataSetChanged();
                         }
                     });
@@ -286,6 +403,7 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (response.isSuccessful()) {
+
                     String body = response.body().string();
                     Log.d(TAG, "onResponse: " + body);
                     Gson gson = new Gson();
@@ -294,6 +412,7 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+                            progressBarSelectShift.setVisibility(View.GONE);
                             selectShiftAdapter.notifyDataSetChanged();
                         }
                     });
@@ -325,6 +444,7 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
                 @Override
                 public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                     if (response.isSuccessful()){
+
                         String body = response.body().string();
                         Log.d(TAG, "onResponse: getjob"+body);
                         Gson gson = new Gson();
@@ -333,6 +453,7 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
                         getActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
+                                progressBarSearchJobCard.setVisibility(View.GONE);
                                 selectJobCardAdapter.notifyDataSetChanged();
                             }
                         });
@@ -363,15 +484,59 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
                 public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                     if (response.isSuccessful()){
                         String body = response.body().string();
-                        Log.d(TAG, "onResponse: jobcard details "+body);
+                        Log.d(TAG, "onResponse: job Card details "+body);
                         Gson gson = new Gson();
                         JobCardDetails jobCardDetails = gson.fromJson(body, JobCardDetails.class);
                         Log.d(TAG, "onResponse: ggrgrrrrrrr"+jobCardDetails);
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                binding.editTextJobNo.setText(mJobCard.getJob_No());
+                                binding.editTextOperations.setText(jobCardDetails.getOperations().toString());
+                                binding.editTextEmployees.setText(jobCardDetails.getEmployees().toString());
+                                binding.editTextLastRecorded.setText(jobCardDetails.getLastRec());
+                                binding.editTextTarg.setText(jobCardDetails.getTarget());
+                                binding.editTextComp.setText(jobCardDetails.getCompleted());
+                            }
+                        });
 
                     }
                 }
             });
         }
+    }
+
+    private void SaveJobCard(){
+        String quantity = binding.editTextQuantity.getText().toString();
+        String url = References.SaveJobCard.methodName;
+        RequestBody formBody = new FormBody.Builder()
+                .add("JobSrNo", mJobCard.getJC_Serial_No())
+                .add("QtyCompleted", quantity)
+                .add("Status", mJobCard.getStatus())
+                .add("Username", mUser.getUsername())
+                .build();
+        Request request = new Request.Builder()
+                .url(url)
+                .post(formBody)
+                .build();
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                if (response.isSuccessful()){
+                    String body = response.body().string();
+
+                }else {
+
+                }
+            }
+        });
+
+
     }
 
     private void datePick(){

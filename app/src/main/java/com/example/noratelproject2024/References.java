@@ -18,5 +18,8 @@ public class References {
     public static class GetJobCardDetail {
         public static String methodName = url + "GetJobCardDetail?jobSrNo=";
     }
+    public static class SaveJobCard {
+        public static String methodName = url + "SaveJobCard";
+    }
 
 }
