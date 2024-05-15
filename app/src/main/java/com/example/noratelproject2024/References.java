@@ -21,5 +21,22 @@ public class References {
     public static class SaveJobCard {
         public static String methodName = url + "SaveJobCard";
     }
+    public static class GetReasonCodes {
+        public static String methodName = url + "GetReasonCodes";
+    }
+    public static class HoldJobCard {
+        public static String methodName = url + "HoldJobCard";
+    }
+    public static class CompleteJobCard {
+        public static String methodName = url + "CompleteJobCard";
+    }
+    public static class HoldToOpen {
+        public static String methodName = url + "HoldToOpen";
+    }
+    public static class NewToOpen {
+        public static String methodName = url + "NewToOpen";
+    }
+
+
 
 }

@@ -18,6 +18,9 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.ProgressBar;
@@ -30,6 +33,7 @@ import com.example.noratelproject2024.Adapters.SelectShiftAdapter;
 import com.example.noratelproject2024.Models.JobCard;
 import com.example.noratelproject2024.Models.JobCardDetails;
 import com.example.noratelproject2024.Models.Lines;
+import com.example.noratelproject2024.Models.ReasonCodes;
 import com.example.noratelproject2024.Models.Shift;
 import com.example.noratelproject2024.Models.User;
 import com.example.noratelproject2024.R;
@@ -48,7 +52,6 @@ import java.util.Calendar;
 
 import okhttp3.Call;
 import okhttp3.Callback;
-import okhttp3.FormBody;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -76,23 +79,23 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
             mUser = (User) getArguments().getSerializable(ARG_PARAM_USER);
         }
     }
-
     FragmentHomeBinding binding;
     private final OkHttpClient client = new OkHttpClient();
     private static final String TAG = "demo";
     ArrayList<Lines> linesArrayList = new ArrayList<>();
     ArrayList<Shift> shiftArrayList = new ArrayList<>();
     ArrayList<JobCard> jobCardArrayList = new ArrayList<>();
+    ArrayList<ReasonCodes> reasonCodesArrayList = new ArrayList<>();
     SelectLineAdapter selectLineAdapter;
     SelectShiftAdapter selectShiftAdapter;
     SelectJobCardAdapter selectJobCardAdapter;
     AlertDialog alertselectLine,alertselectShift,alertselectJobCard;
     ProgressBar progressBarSelectShift,progressBarSearchJobCard,progressBarSelectLine;
-
     Shift mShift;
     Lines mLines;
     JobCard mJobCard;
-
+    ReasonCodes mReasonCodes;
+    int count = 0;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentHomeBinding.inflate(inflater, container, false);
@@ -112,6 +115,28 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
             @Override
             public void onClick(View v) {
                 datePick();
+            }
+        });
+        binding.buttonPlus.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String quantity = binding.editTextQuantity.getText().toString();
+                if (!quantity.isEmpty()){
+                        count = Integer.valueOf(quantity);
+                        count++;
+                        binding.editTextQuantity.setText(String.valueOf(count));
+                }
+            }
+        });
+        binding.buttonMin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String quantity = binding.editTextQuantity.getText().toString();
+                if (!quantity.isEmpty()){
+                    count = Integer.valueOf(quantity);
+                    count--;
+                    binding.editTextQuantity.setText(String.valueOf(count));
+                }
             }
         });
         binding.buttonJobCard.setOnClickListener(new View.OnClickListener() {
@@ -141,7 +166,18 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
                 saveJobCardWarning();
             }
         });
-
+        binding.buttonHold.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SelectReasonCode();
+            }
+        });
+        binding.buttonComplete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                CompleteWarning();
+            }
+        });
     }
     public void dateAndTime() {
         Thread t = new Thread() {
@@ -266,7 +302,6 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
         selectShiftAdapter = new SelectShiftAdapter(shiftArrayList,this);
         recyclerView.setAdapter(selectShiftAdapter);
     }
-
     private void selectJobCardCustomDialog(){
         getJobCard();
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
@@ -299,7 +334,7 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
         alertDialog.show();
 
         Button buttonClose = view.findViewById(R.id.buttonClose);
-        Button buttonConfirm = view.findViewById(R.id.buttonConfirm);
+        Button buttonConfirm = view.findViewById(R.id.buttonActivate);
 
         buttonConfirm.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -332,7 +367,7 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
         alertDialog.show();
 
         Button buttonClose = view.findViewById(R.id.buttonClose);
-        Button buttonConfirm = view.findViewById(R.id.buttonConfirm);
+        Button buttonConfirm = view.findViewById(R.id.buttonActivate);
 
         buttonConfirm.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -347,6 +382,115 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
                 binding.editTextComp.setText("");
                 binding.editTextQuantity.setText("0");
                 binding.editTextSerialNumber.setText("");
+                alertDialog.dismiss();
+            }
+        });
+
+        buttonClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alertDialog.dismiss();
+            }
+        });
+
+    }
+    private void SelectReasonCode(){
+        GetReasonCodes();
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+        View view = inflater.inflate(R.layout.custom_hold_dialog,null);
+        builder.setView(view);
+
+        AlertDialog alertDialog = builder.create();
+        alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        alertDialog.show();
+
+        AutoCompleteTextView autoCompleteTextView = view.findViewById(R.id.autoCompleteTextViewHold);
+        ArrayAdapter<ReasonCodes> adapter = new ArrayAdapter<ReasonCodes>(getActivity(),R.layout.dropdown_item,reasonCodesArrayList);
+        autoCompleteTextView.setAdapter(adapter);
+        Button buttonClose = view.findViewById(R.id.buttonClose);
+        Button buttonConfirm = view.findViewById(R.id.buttonActivate);
+        autoCompleteTextView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                mReasonCodes = reasonCodesArrayList.get(position);
+                Toast.makeText(getActivity(), mReasonCodes.getCategory(), Toast.LENGTH_SHORT).show();
+            }
+        });
+        buttonConfirm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    HoldJobCard();
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
+                alertDialog.dismiss();
+            }
+        });
+        buttonClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alertDialog.dismiss();
+            }
+        });
+
+    }
+
+    private void CompleteWarning(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+        View view = inflater.inflate(R.layout.custom_warning,null);
+        builder.setView(view);
+
+        AlertDialog alertDialog = builder.create();
+        alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        alertDialog.show();
+
+        Button buttonClose = view.findViewById(R.id.buttonClose);
+        Button buttonConfirm = view.findViewById(R.id.buttonActivate);
+
+        buttonConfirm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    CompleteJobCard();
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
+                alertDialog.dismiss();
+            }
+        });
+
+        buttonClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alertDialog.dismiss();
+            }
+        });
+
+    }
+    private void JobHoldToOpenWarning(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+        View view = inflater.inflate(R.layout.custom_job_hold_warning,null);
+        builder.setView(view);
+
+        AlertDialog alertDialog = builder.create();
+        alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        alertDialog.show();
+
+        Button buttonClose = view.findViewById(R.id.buttonClose);
+        Button buttonActivate = view.findViewById(R.id.buttonActivate);
+
+        buttonActivate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    HoldToOpen();
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
                 alertDialog.dismiss();
             }
         });
@@ -513,6 +657,30 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
             });
         }
     }
+    private void GetReasonCodes(){
+        Request request = new Request.Builder()
+                .url(References.GetReasonCodes.methodName)
+                .build();
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                if (response.isSuccessful()){
+                    String body = response.body().string();
+                    Log.d(TAG, "onResponse: Get Reason Codes "+body);
+                    Gson gson = new Gson();
+                    ReasonCodes[] reasonCodes = gson.fromJson(body,ReasonCodes[].class);
+                    reasonCodesArrayList.addAll(Arrays.asList(reasonCodes ));
+                }else {
+
+                }
+            }
+        });
+    }
 
     private void SaveJobCard() throws JSONException {
         String quantity = binding.editTextQuantity.getText().toString();
@@ -550,6 +718,99 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
 
 
     }
+    private void HoldJobCard() throws JSONException {
+
+        String quantity = binding.editTextQuantity.getText().toString();
+        JSONObject jsonBody = new JSONObject();
+
+        jsonBody.put("JobSrNo",mJobCard.getJC_Serial_No());
+        jsonBody.put("QtyCompleted", quantity);
+        jsonBody.put("Status", mJobCard.getStatus());
+        jsonBody.put("Username", mUser.getUsername());
+        jsonBody.put("ReasonCode", mReasonCodes.getSr_No());
+
+        RequestBody requestBody = RequestBody.create(jsonBody.toString(), MediaType.parse("application/json"));
+        Request request = new Request.Builder()
+                .url(References.HoldJobCard.methodName)
+                .post(requestBody)
+                .build();
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                if (response.isSuccessful()){
+                    String body = response.body().string();
+                    Log.d(TAG, "onResponse: HoldJobCard "+body);
+                    Log.d(TAG, "onResponse: HoldJobCard "+ jsonBody.toString());
+                }else {
+
+                }
+            }
+        });
+    }
+    private void CompleteJobCard() throws JSONException {
+        JSONObject jsonBody = new JSONObject();
+        jsonBody.put("JobSrNo",mJobCard.getJC_Serial_No());
+        jsonBody.put("Status", mJobCard.getStatus());
+        jsonBody.put("Username", mUser.getUsername());
+
+        RequestBody requestBody = RequestBody.create(jsonBody.toString(), MediaType.parse("application/json"));
+        Request request = new Request.Builder()
+                .url(References.CompleteJobCard.methodName)
+                .post(requestBody)
+                .build();
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                if (response.isSuccessful()){
+                    String body = response.body().string();
+                    Log.d(TAG, "onResponse: CompleteJobCard "+body);
+                }else {
+                    Log.d(TAG, "onResponse: CompleteJobCard ERROR!!!!!");
+                }
+            }
+        });
+    }
+
+    private void HoldToOpen() throws JSONException {
+
+        JSONObject jsonBody = new JSONObject();
+        jsonBody.put("JobSrNo",mJobCard.getJC_Serial_No());
+        jsonBody.put("Username", mUser.getUsername());
+
+        RequestBody requestBody = RequestBody.create(jsonBody.toString(), MediaType.parse("application/json"));
+        Request request = new Request.Builder()
+                .url(References.HoldToOpen.methodName)
+                .post(requestBody)
+                .build();
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                if (response.isSuccessful()){
+                    String body = response.body().string();
+                    Log.d(TAG, "onResponse: HoldToOpen "+body);
+                }else {
+                    Log.d(TAG, "onResponse: HoldToOpen Error!!!!!!");
+
+                }
+            }
+        });
+    }
+
 
     private void datePick(){
         Calendar calendar = Calendar.getInstance();
@@ -594,6 +855,9 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
     @Override
     public void onJobCardSelected(JobCard jobCard) {
         this.mJobCard=jobCard;
+        if (jobCard.getStatus().equals("Hold")){
+            JobHoldToOpenWarning();
+        }
         binding.buttonJobCard.setText(jobCard.getJObCardNo());
         GetJobCardDetail();
         alertselectJobCard.dismiss();
