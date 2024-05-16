@@ -63,9 +63,11 @@ import okhttp3.Response;
 public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShiftSelectedListener, SelectLineAdapter.OnLineSelectedListener, SelectJobCardAdapter.OnJobCardSelectedListener {
     private static final String ARG_PARAM_USER = "ARG_PARAM_USER";
     private User mUser;
+
     public HomeFragment() {
         // Required empty public constructor
     }
+
     public static HomeFragment newInstance(User mUser) {
         HomeFragment fragment = new HomeFragment();
         Bundle args = new Bundle();
@@ -81,29 +83,33 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
             mUser = (User) getArguments().getSerializable(ARG_PARAM_USER);
         }
     }
+
     FragmentHomeBinding binding;
     private final OkHttpClient client = new OkHttpClient();
     private static final String TAG = "demo";
     ArrayList<Lines> linesArrayList = new ArrayList<>();
     ArrayList<Shift> shiftArrayList = new ArrayList<>();
     ArrayList<JobCard> jobCardArrayList = new ArrayList<>();
+    ArrayList<JobCard> jobCardArrayListSearch = new ArrayList<>();
     ArrayList<ReasonCodes> reasonCodesArrayList = new ArrayList<>();
     SelectLineAdapter selectLineAdapter;
     SelectShiftAdapter selectShiftAdapter;
     SelectJobCardAdapter selectJobCardAdapter;
-    AlertDialog alertselectLine,alertselectShift,alertselectJobCard;
-    ProgressBar progressBarSelectShift,progressBarSearchJobCard,progressBarSelectLine;
+    AlertDialog alertselectLine, alertselectShift, alertselectJobCard;
+    ProgressBar progressBarSelectShift, progressBarSearchJobCard, progressBarSelectLine;
     Shift mShift;
     Lines mLines;
     JobCard mJobCard;
     JobCardDetails jobCardDetails;
     ReasonCodes mReasonCodes;
     int count = 0;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         return binding.getRoot();
     }
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -124,10 +130,10 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
             @Override
             public void onClick(View v) {
                 String quantity = binding.editTextQuantity.getText().toString();
-                if (!quantity.isEmpty()){
-                        count = Integer.valueOf(quantity);
-                        count++;
-                        binding.editTextQuantity.setText(String.valueOf(count));
+                if (!quantity.isEmpty()) {
+                    count = Integer.valueOf(quantity);
+                    count++;
+                    binding.editTextQuantity.setText(String.valueOf(count));
                 }
             }
         });
@@ -135,7 +141,7 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
             @Override
             public void onClick(View v) {
                 String quantity = binding.editTextQuantity.getText().toString();
-                if (!quantity.isEmpty()){
+                if (!quantity.isEmpty()) {
                     count = Integer.valueOf(quantity);
                     count--;
                     binding.editTextQuantity.setText(String.valueOf(count));
@@ -148,11 +154,11 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
 
                 String line = binding.textViewLine.getText().toString().trim();
                 String shift = binding.textViewShift.getText().toString().trim();
-                if (line.equals("N/A")){
+                if (line.equals("N/A")) {
                     Toast.makeText(getActivity(), "Please Select Line", Toast.LENGTH_SHORT).show();
                 } else if (shift.equals("N/A")) {
                     Toast.makeText(getActivity(), "Please Select Shift", Toast.LENGTH_SHORT).show();
-                }else {
+                } else {
                     selectJobCardCustomDialog();
                 }
             }
@@ -160,7 +166,7 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
         binding.buttonClear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-              clearEverything();
+                clearEverything();
             }
         });
         binding.buttonSave.setOnClickListener(new View.OnClickListener() {
@@ -188,6 +194,7 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
             }
         });
     }
+
     public void dateAndTime() {
         Thread t = new Thread() {
             @Override
@@ -218,6 +225,7 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
         };
         t.start();
     }
+
     private void settingsCustomDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         LayoutInflater inflater = getActivity().getLayoutInflater();
@@ -234,21 +242,21 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
         TextView textViewSelectedLine = view.findViewById(R.id.textViewSelectedLine);
         TextView textViewSelectedShift = view.findViewById(R.id.textViewSelectedShift);
         TextView textViewUserName = view.findViewById(R.id.textViewUserName);
-        if (mUser != null){
+        if (mUser != null) {
             textViewUserName.setText(mUser.getUsername());
-        }else {
+        } else {
             textViewUserName.setText("N/A");
         }
 
-        if (mLines != null){
+        if (mLines != null) {
             textViewSelectedLine.setText(mLines.getSUB_UNINAME());
-        }else {
+        } else {
             textViewSelectedLine.setText("N/A");
         }
 
-        if (mShift != null){
+        if (mShift != null) {
             textViewSelectedShift.setText(mShift.getRoster());
-        }else {
+        } else {
             textViewSelectedShift.setText("N/A");
         }
 
@@ -275,11 +283,12 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
         });
 
     }
-    private void selectLineCustomDialog(){
+
+    private void selectLineCustomDialog() {
         getLines();
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         LayoutInflater inflater = getActivity().getLayoutInflater();
-        View view = inflater.inflate(R.layout.custom_select_line,null);
+        View view = inflater.inflate(R.layout.custom_select_line, null);
         builder.setView(view);
 
         alertselectLine = builder.create();
@@ -287,17 +296,18 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
         alertselectLine.show();
 
         RecyclerView recyclerView = view.findViewById(R.id.recyclerView);
-        progressBarSelectLine=view.findViewById(R.id.progressBarSelectLine);
+        progressBarSelectLine = view.findViewById(R.id.progressBarSelectLine);
         progressBarSelectLine.setVisibility(View.VISIBLE);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        selectLineAdapter = new SelectLineAdapter(linesArrayList,this);
+        selectLineAdapter = new SelectLineAdapter(linesArrayList, this);
         recyclerView.setAdapter(selectLineAdapter);
     }
-    private void selectShiftCustomDialog(){
+
+    private void selectShiftCustomDialog() {
         getShift();
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         LayoutInflater inflater = getActivity().getLayoutInflater();
-        View view = inflater.inflate(R.layout.custom_select_shift,null);
+        View view = inflater.inflate(R.layout.custom_select_shift, null);
         builder.setView(view);
 
         alertselectShift = builder.create();
@@ -305,30 +315,31 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
         alertselectShift.show();
 
         RecyclerView recyclerView = view.findViewById(R.id.recyclerView);
-        progressBarSelectShift=view.findViewById(R.id.progressBarSelectShift);
+        progressBarSelectShift = view.findViewById(R.id.progressBarSelectShift);
         progressBarSelectShift.setVisibility(View.VISIBLE);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        selectShiftAdapter = new SelectShiftAdapter(shiftArrayList,this);
+        selectShiftAdapter = new SelectShiftAdapter(shiftArrayList, this);
         recyclerView.setAdapter(selectShiftAdapter);
     }
-    private void selectJobCardCustomDialog(){
+
+    private void selectJobCardCustomDialog() {
         getJobCard();
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         LayoutInflater inflater = getActivity().getLayoutInflater();
-        View view = inflater.inflate(R.layout.custom_search_jobcard,null);
+        View view = inflater.inflate(R.layout.custom_search_jobcard, null);
         builder.setView(view);
 
         alertselectJobCard = builder.create();
         alertselectJobCard.getWindow().setGravity(Gravity.BOTTOM);
-        alertselectJobCard.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT);
+        alertselectJobCard.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         alertselectJobCard.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         alertselectJobCard.show();
 
         RecyclerView recyclerView = view.findViewById(R.id.recyclerView);
-        progressBarSearchJobCard=view.findViewById(R.id.progressBarSearchJobCard);
+        progressBarSearchJobCard = view.findViewById(R.id.progressBarSearchJobCard);
         progressBarSearchJobCard.setVisibility(View.VISIBLE);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        selectJobCardAdapter = new SelectJobCardAdapter(jobCardArrayList,this);
+        selectJobCardAdapter = new SelectJobCardAdapter(jobCardArrayList, this);
         recyclerView.setAdapter(selectJobCardAdapter);
         EditText editTextSearch = view.findViewById(R.id.editTextSearch);
         ImageView imageViewSearch = view.findViewById(R.id.imageViewSearch);
@@ -336,16 +347,25 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
             @Override
             public void onClick(View v) {
                 String search = editTextSearch.getText().toString().trim();
-                selectJobCardAdapter.filter(search);
+//                if (search.length() > 6){
+//                    selectJobCardAdapter.filter(search);
+//                }else {
+//                    SearchByEmpNo();
+//                    selectJobCardAdapter = new SelectJobCardAdapter(jobCardArrayListSearch,HomeFragment.this);
+//                    selectJobCardAdapter.notifyDataSetChanged();
+//                }
+                SearchByEmpNo();
+                selectJobCardAdapter = new SelectJobCardAdapter(jobCardArrayListSearch, HomeFragment.this);
+                selectJobCardAdapter.notifyDataSetChanged();
+
             }
         });
-
     }
 
-    private void saveJobCardWarning(){
+    private void saveJobCardWarning() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         LayoutInflater inflater = getActivity().getLayoutInflater();
-        View view = inflater.inflate(R.layout.custom_warning,null);
+        View view = inflater.inflate(R.layout.custom_warning, null);
         builder.setView(view);
 
         AlertDialog alertDialog = builder.create();
@@ -375,10 +395,11 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
         });
 
     }
-    private void clearEverything(){
+
+    private void clearEverything() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         LayoutInflater inflater = getActivity().getLayoutInflater();
-        View view = inflater.inflate(R.layout.custom_warning,null);
+        View view = inflater.inflate(R.layout.custom_warning, null);
         builder.setView(view);
 
         AlertDialog alertDialog = builder.create();
@@ -413,11 +434,12 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
         });
 
     }
-    private void SelectReasonCode(){
+
+    private void SelectReasonCode() {
         GetReasonCodes();
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         LayoutInflater inflater = getActivity().getLayoutInflater();
-        View view = inflater.inflate(R.layout.custom_hold_dialog,null);
+        View view = inflater.inflate(R.layout.custom_hold_dialog, null);
         builder.setView(view);
 
         AlertDialog alertDialog = builder.create();
@@ -425,7 +447,7 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
         alertDialog.show();
 
         AutoCompleteTextView autoCompleteTextView = view.findViewById(R.id.autoCompleteTextViewHold);
-        ArrayAdapter<ReasonCodes> adapter = new ArrayAdapter<ReasonCodes>(getActivity(),R.layout.dropdown_item,reasonCodesArrayList);
+        ArrayAdapter<ReasonCodes> adapter = new ArrayAdapter<ReasonCodes>(getActivity(), R.layout.dropdown_item, reasonCodesArrayList);
         autoCompleteTextView.setAdapter(adapter);
         Button buttonClose = view.findViewById(R.id.buttonClose);
         Button buttonConfirm = view.findViewById(R.id.buttonActivate);
@@ -456,10 +478,10 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
 
     }
 
-    private void CompleteWarning(){
+    private void CompleteWarning() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         LayoutInflater inflater = getActivity().getLayoutInflater();
-        View view = inflater.inflate(R.layout.custom_warning,null);
+        View view = inflater.inflate(R.layout.custom_warning, null);
         builder.setView(view);
 
         AlertDialog alertDialog = builder.create();
@@ -489,10 +511,11 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
         });
 
     }
-    private void JobHoldToOpenWarning(){
+
+    private void JobHoldToOpenWarning() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         LayoutInflater inflater = getActivity().getLayoutInflater();
-        View view = inflater.inflate(R.layout.custom_job_hold_warning,null);
+        View view = inflater.inflate(R.layout.custom_job_hold_warning, null);
         builder.setView(view);
 
         AlertDialog alertDialog = builder.create();
@@ -530,10 +553,11 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
         });
 
     }
-    private void NumberPlates(){
+
+    private void NumberPlates() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         LayoutInflater inflater = getActivity().getLayoutInflater();
-        View view = inflater.inflate(R.layout.custom_number_plate,null);
+        View view = inflater.inflate(R.layout.custom_number_plate, null);
         builder.setView(view);
 
         AlertDialog alertDialog = builder.create();
@@ -541,7 +565,7 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
         alertDialog.show();
 
         EditText editTextQ = view.findViewById(R.id.editTextQ);
-        Button button1,button2,button3,button4,button5,button6,button7,button8,button9,button0;
+        Button button1, button2, button3, button4, button5, button6, button7, button8, button9, button0;
         button0 = view.findViewById(R.id.button0);
         button1 = view.findViewById(R.id.button1);
         button2 = view.findViewById(R.id.button2);
@@ -560,70 +584,70 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
             @Override
             public void onClick(View v) {
                 String quantity = editTextQ.getText().toString();
-                editTextQ.setText(quantity+0);
+                editTextQ.setText(quantity + 0);
             }
         });
         button1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String quantity = editTextQ.getText().toString();
-                editTextQ.setText(quantity+1);
+                editTextQ.setText(quantity + 1);
             }
         });
         button2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String quantity = editTextQ.getText().toString();
-                editTextQ.setText(quantity+2);
+                editTextQ.setText(quantity + 2);
             }
         });
         button3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String quantity = editTextQ.getText().toString();
-                editTextQ.setText(quantity+3);
+                editTextQ.setText(quantity + 3);
             }
         });
         button4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String quantity = editTextQ.getText().toString();
-                editTextQ.setText(quantity+4);
+                editTextQ.setText(quantity + 4);
             }
         });
         button5.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String quantity = editTextQ.getText().toString();
-                editTextQ.setText(quantity+5);
+                editTextQ.setText(quantity + 5);
             }
         });
         button6.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String quantity = editTextQ.getText().toString();
-                editTextQ.setText(quantity+6);
+                editTextQ.setText(quantity + 6);
             }
         });
         button7.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String quantity = editTextQ.getText().toString();
-                editTextQ.setText(quantity+7);
+                editTextQ.setText(quantity + 7);
             }
         });
         button8.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String quantity = editTextQ.getText().toString();
-                editTextQ.setText(quantity+8);
+                editTextQ.setText(quantity + 8);
             }
         });
         button9.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String quantity = editTextQ.getText().toString();
-                editTextQ.setText(quantity+9);
+                editTextQ.setText(quantity + 9);
             }
         });
         buttonSet.setOnClickListener(new View.OnClickListener() {
@@ -663,7 +687,7 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
                     String body = response.body().string();
                     Log.d(TAG, "onResponse: " + body);
                     Gson gson = new Gson();
-                    Lines[] lines = gson.fromJson(body,Lines[].class);
+                    Lines[] lines = gson.fromJson(body, Lines[].class);
                     linesArrayList.addAll(Arrays.asList(lines));
 
                     getActivity().runOnUiThread(new Runnable() {
@@ -699,7 +723,7 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
                     String body = response.body().string();
                     Log.d(TAG, "onResponse: " + body);
                     Gson gson = new Gson();
-                    Shift[] shifts = gson.fromJson(body,Shift[].class);
+                    Shift[] shifts = gson.fromJson(body, Shift[].class);
                     shiftArrayList.addAll(Arrays.asList(shifts));
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
@@ -715,14 +739,14 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
         });
     }
 
-    private void getJobCard(){
+    private void getJobCard() {
         jobCardArrayList.clear();
         String date = binding.buttonDatePicker.getText().toString().trim();
-        if (mLines != null && mShift != null){
-            String url = References.GetJobCard.methodName+
-                    "?date="+date +
-                    "&line="+mLines.getSUB_UNICODE() +
-                    "&shift="+mShift.getRoster();
+        if (mLines != null && mShift != null) {
+            String url = References.GetJobCard.methodName +
+                    "?date=" + date +
+                    "&line=" + mLines.getSUB_UNICODE() +
+                    "&shift=" + mShift.getRoster();
 
             Request request = new Request.Builder()
                     .url(url)
@@ -735,12 +759,12 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
 
                 @Override
                 public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                    if (response.isSuccessful()){
+                    if (response.isSuccessful()) {
 
                         String body = response.body().string();
-                        Log.d(TAG, "onResponse: getjob"+body);
+                        Log.d(TAG, "onResponse: getjob" + body);
                         Gson gson = new Gson();
-                        JobCard[] jobCards = gson.fromJson(body,JobCard[].class);
+                        JobCard[] jobCards = gson.fromJson(body, JobCard[].class);
                         jobCardArrayList.addAll(Arrays.asList(jobCards));
                         getActivity().runOnUiThread(new Runnable() {
                             @Override
@@ -750,7 +774,7 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
                             }
                         });
 
-                    }else {
+                    } else {
 
                     }
                 }
@@ -758,9 +782,9 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
         }
     }
 
-    private void GetJobCardDetail(){
-        if (mJobCard != null){
-            String url = References.GetJobCardDetail.methodName+mJobCard.getJC_Serial_No();
+    private void GetJobCardDetail() {
+        if (mJobCard != null) {
+            String url = References.GetJobCardDetail.methodName + mJobCard.getJC_Serial_No();
 
             Request request = new Request.Builder()
                     .url(url)
@@ -774,16 +798,16 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
 
                 @Override
                 public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                    if (response.isSuccessful()){
+                    if (response.isSuccessful()) {
                         String body = response.body().string();
-                        Log.d(TAG, "onResponse: job Card details "+body);
+                        Log.d(TAG, "onResponse: job Card details " + body);
                         Gson gson = new Gson();
                         jobCardDetails = gson.fromJson(body, JobCardDetails.class);
-                        Log.d(TAG, "onResponse: ggrgrrrrrrr"+jobCardDetails);
+                        Log.d(TAG, "onResponse: ggrgrrrrrrr" + jobCardDetails);
                         getActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                if (!mJobCard.getStatus().equals("Hold")){
+                                if (!mJobCard.getStatus().equals("Hold")) {
                                     binding.buttonJobCard.setText(mJobCard.getJObCardNo());
                                     binding.editTextJobNo.setText(mJobCard.getJob_No());
                                     binding.editTextOperations.setText(jobCardDetails.getOperations().toString());
@@ -801,7 +825,8 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
             });
         }
     }
-    private void GetReasonCodes(){
+
+    private void GetReasonCodes() {
         Request request = new Request.Builder()
                 .url(References.GetReasonCodes.methodName)
                 .build();
@@ -813,17 +838,45 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
 
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                if (response.isSuccessful()){
+                if (response.isSuccessful()) {
                     String body = response.body().string();
-                    Log.d(TAG, "onResponse: Get Reason Codes "+body);
+                    Log.d(TAG, "onResponse: Get Reason Codes " + body);
                     Gson gson = new Gson();
-                    ReasonCodes[] reasonCodes = gson.fromJson(body,ReasonCodes[].class);
-                    reasonCodesArrayList.addAll(Arrays.asList(reasonCodes ));
-                }else {
+                    ReasonCodes[] reasonCodes = gson.fromJson(body, ReasonCodes[].class);
+                    reasonCodesArrayList.addAll(Arrays.asList(reasonCodes));
+                } else {
 
                 }
             }
         });
+    }
+
+    private void SearchByEmpNo() {
+        jobCardArrayListSearch.clear();
+        String url = References.SearchByEmpNo.methodName + mUser.getUsername();
+        Request request = new Request.Builder()
+                .url(url)
+                .build();
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    String body = response.body().string();
+                    Gson gson = new Gson();
+                    JobCard[] jobCards = gson.fromJson(body, JobCard[].class);
+                    jobCardArrayListSearch.addAll(Arrays.asList(jobCards));
+                    Log.d(TAG, "onResponse: SearchByEmpNo" + body);
+                } else {
+
+                }
+            }
+        });
+
     }
 
     private void SaveJobCard() throws JSONException {
@@ -850,11 +903,11 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
 
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                if (response.isSuccessful()){
+                if (response.isSuccessful()) {
                     String body = response.body().string();
-                    Log.d(TAG, "onResponse: POST "+body);
+                    Log.d(TAG, "onResponse: POST " + body);
 
-                }else {
+                } else {
 
                 }
             }
@@ -862,12 +915,13 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
 
 
     }
+
     private void HoldJobCard() throws JSONException {
 
         String quantity = binding.editTextQuantity.getText().toString();
         JSONObject jsonBody = new JSONObject();
 
-        jsonBody.put("JobSrNo",mJobCard.getJC_Serial_No());
+        jsonBody.put("JobSrNo", mJobCard.getJC_Serial_No());
         jsonBody.put("QtyCompleted", quantity);
         jsonBody.put("Status", mJobCard.getStatus());
         jsonBody.put("Username", mUser.getUsername());
@@ -886,19 +940,20 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
 
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                if (response.isSuccessful()){
+                if (response.isSuccessful()) {
                     String body = response.body().string();
-                    Log.d(TAG, "onResponse: HoldJobCard "+body);
-                    Log.d(TAG, "onResponse: HoldJobCard "+ jsonBody.toString());
-                }else {
+                    Log.d(TAG, "onResponse: HoldJobCard " + body);
+                    Log.d(TAG, "onResponse: HoldJobCard " + jsonBody.toString());
+                } else {
 
                 }
             }
         });
     }
+
     private void CompleteJobCard() throws JSONException {
         JSONObject jsonBody = new JSONObject();
-        jsonBody.put("JobSrNo",mJobCard.getJC_Serial_No());
+        jsonBody.put("JobSrNo", mJobCard.getJC_Serial_No());
         jsonBody.put("Status", mJobCard.getStatus());
         jsonBody.put("Username", mUser.getUsername());
 
@@ -915,10 +970,10 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
 
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                if (response.isSuccessful()){
+                if (response.isSuccessful()) {
                     String body = response.body().string();
-                    Log.d(TAG, "onResponse: CompleteJobCard "+body);
-                }else {
+                    Log.d(TAG, "onResponse: CompleteJobCard " + body);
+                } else {
                     Log.d(TAG, "onResponse: CompleteJobCard ERROR!!!!!");
                 }
             }
@@ -928,7 +983,7 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
     private void HoldToOpen() throws JSONException {
 
         JSONObject jsonBody = new JSONObject();
-        jsonBody.put("JobSrNo",mJobCard.getJC_Serial_No());
+        jsonBody.put("JobSrNo", mJobCard.getJC_Serial_No());
         jsonBody.put("Username", mUser.getUsername());
 
         RequestBody requestBody = RequestBody.create(jsonBody.toString(), MediaType.parse("application/json"));
@@ -944,10 +999,10 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
 
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                if (response.isSuccessful()){
+                if (response.isSuccessful()) {
                     String body = response.body().string();
-                    Log.d(TAG, "onResponse: HoldToOpen "+body);
-                }else {
+                    Log.d(TAG, "onResponse: HoldToOpen " + body);
+                } else {
                     Log.d(TAG, "onResponse: HoldToOpen Error!!!!!!");
 
                 }
@@ -956,7 +1011,7 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
     }
 
 
-    private void datePick(){
+    private void datePick() {
         Calendar calendar = Calendar.getInstance();
         int YEAR = calendar.get(Calendar.YEAR);
         int MONTH = calendar.get(Calendar.MONTH);
@@ -965,10 +1020,10 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
         DatePickerDialog datePickerDialog = new DatePickerDialog(getActivity(), new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                String date = year+"-"+month+"-"+dayOfMonth;
+                String date = year + "-" + month + "-" + dayOfMonth;
                 binding.buttonDatePicker.setText(date);
             }
-        },YEAR,MONTH,DATE);
+        }, YEAR, MONTH, DATE);
         datePickerDialog.show();
 
     }
@@ -998,8 +1053,8 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
 
     @Override
     public void onJobCardSelected(JobCard jobCard) {
-        this.mJobCard=jobCard;
-        if (jobCard.getStatus().equals("Hold")){
+        this.mJobCard = jobCard;
+        if (jobCard.getStatus().equals("Hold")) {
             JobHoldToOpenWarning();
         }
         GetJobCardDetail();
