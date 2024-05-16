@@ -12,10 +12,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.noratelproject2024.Models.JobCard;
 import com.example.noratelproject2024.R;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class SelectJobCardAdapter extends RecyclerView.Adapter<SelectJobCardAdapter.JobcardViewHolder> {
     List<JobCard> jobCardList;
+    List<JobCard> jobCardListFull;
     private OnJobCardSelectedListener listener;
     public interface OnJobCardSelectedListener{
         void onJobCardSelected(JobCard jobCard);
@@ -24,6 +26,7 @@ public class SelectJobCardAdapter extends RecyclerView.Adapter<SelectJobCardAdap
     public SelectJobCardAdapter(List<JobCard> jobCardList, OnJobCardSelectedListener listener) {
         this.jobCardList = jobCardList;
         this.listener = listener;
+        jobCardListFull = new ArrayList<>(jobCardList);
     }
 
     @NonNull
@@ -55,6 +58,24 @@ public class SelectJobCardAdapter extends RecyclerView.Adapter<SelectJobCardAdap
     public int getItemCount() {
         return jobCardList.size();
     }
+
+    public void filter(String text) {
+        jobCardList.clear();
+        if (text.isEmpty()) {
+            jobCardList.addAll(jobCardListFull);
+        } else {
+            text = text.toLowerCase();
+            for (JobCard jobCard : jobCardListFull) {
+                if (jobCard.getJObCardNo().toLowerCase().contains(text) ||
+                        jobCard.getStatus().toLowerCase().contains(text)) {
+                    jobCardList.add(jobCard);
+                }
+            }
+        }
+        notifyDataSetChanged();
+    }
+
+
 
     class JobcardViewHolder extends RecyclerView.ViewHolder{
         TextView textViewJobCardNo,textViewStatus,textViewDate,textViewJC_Serial_No;

@@ -23,6 +23,8 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -94,6 +96,7 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
     Shift mShift;
     Lines mLines;
     JobCard mJobCard;
+    JobCardDetails jobCardDetails;
     ReasonCodes mReasonCodes;
     int count = 0;
     @Override
@@ -176,6 +179,12 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
             @Override
             public void onClick(View v) {
                 CompleteWarning();
+            }
+        });
+        binding.editTextQuantity.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                NumberPlates();
             }
         });
     }
@@ -321,6 +330,16 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         selectJobCardAdapter = new SelectJobCardAdapter(jobCardArrayList,this);
         recyclerView.setAdapter(selectJobCardAdapter);
+        EditText editTextSearch = view.findViewById(R.id.editTextSearch);
+        ImageView imageViewSearch = view.findViewById(R.id.imageViewSearch);
+        imageViewSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String search = editTextSearch.getText().toString().trim();
+                selectJobCardAdapter.filter(search);
+            }
+        });
+
     }
 
     private void saveJobCardWarning(){
@@ -488,6 +507,14 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
             public void onClick(View v) {
                 try {
                     HoldToOpen();
+                    binding.buttonJobCard.setText(mJobCard.getJObCardNo());
+                    binding.editTextJobNo.setText(mJobCard.getJob_No());
+                    binding.editTextOperations.setText(jobCardDetails.getOperations().toString());
+                    binding.editTextEmployees.setText(jobCardDetails.getEmployees().toString());
+                    binding.editTextLastRecorded.setText(jobCardDetails.getLastRec());
+                    binding.editTextTarg.setText(jobCardDetails.getTarget());
+                    binding.editTextComp.setText(jobCardDetails.getCompleted());
+
                 } catch (JSONException e) {
                     throw new RuntimeException(e);
                 }
@@ -499,6 +526,119 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
             @Override
             public void onClick(View v) {
                 alertDialog.dismiss();
+            }
+        });
+
+    }
+    private void NumberPlates(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+        View view = inflater.inflate(R.layout.custom_number_plate,null);
+        builder.setView(view);
+
+        AlertDialog alertDialog = builder.create();
+        alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        alertDialog.show();
+
+        EditText editTextQ = view.findViewById(R.id.editTextQ);
+        Button button1,button2,button3,button4,button5,button6,button7,button8,button9,button0;
+        button0 = view.findViewById(R.id.button0);
+        button1 = view.findViewById(R.id.button1);
+        button2 = view.findViewById(R.id.button2);
+        button3 = view.findViewById(R.id.button3);
+        button4 = view.findViewById(R.id.button4);
+        button5 = view.findViewById(R.id.button5);
+        button6 = view.findViewById(R.id.button6);
+        button7 = view.findViewById(R.id.button7);
+        button8 = view.findViewById(R.id.button8);
+        button9 = view.findViewById(R.id.button9);
+        Button buttonClear = view.findViewById(R.id.buttonClear);
+        Button buttonSet = view.findViewById(R.id.buttonSet);
+
+
+        button0.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String quantity = editTextQ.getText().toString();
+                editTextQ.setText(quantity+0);
+            }
+        });
+        button1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String quantity = editTextQ.getText().toString();
+                editTextQ.setText(quantity+1);
+            }
+        });
+        button2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String quantity = editTextQ.getText().toString();
+                editTextQ.setText(quantity+2);
+            }
+        });
+        button3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String quantity = editTextQ.getText().toString();
+                editTextQ.setText(quantity+3);
+            }
+        });
+        button4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String quantity = editTextQ.getText().toString();
+                editTextQ.setText(quantity+4);
+            }
+        });
+        button5.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String quantity = editTextQ.getText().toString();
+                editTextQ.setText(quantity+5);
+            }
+        });
+        button6.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String quantity = editTextQ.getText().toString();
+                editTextQ.setText(quantity+6);
+            }
+        });
+        button7.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String quantity = editTextQ.getText().toString();
+                editTextQ.setText(quantity+7);
+            }
+        });
+        button8.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String quantity = editTextQ.getText().toString();
+                editTextQ.setText(quantity+8);
+            }
+        });
+        button9.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String quantity = editTextQ.getText().toString();
+                editTextQ.setText(quantity+9);
+            }
+        });
+        buttonSet.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String quantity = editTextQ.getText().toString().trim();
+                binding.editTextQuantity.setText(quantity);
+                alertDialog.dismiss();
+            }
+        });
+
+        buttonClear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                editTextQ.setText("");
             }
         });
 
@@ -638,17 +778,21 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
                         String body = response.body().string();
                         Log.d(TAG, "onResponse: job Card details "+body);
                         Gson gson = new Gson();
-                        JobCardDetails jobCardDetails = gson.fromJson(body, JobCardDetails.class);
+                        jobCardDetails = gson.fromJson(body, JobCardDetails.class);
                         Log.d(TAG, "onResponse: ggrgrrrrrrr"+jobCardDetails);
                         getActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                binding.editTextJobNo.setText(mJobCard.getJob_No());
-                                binding.editTextOperations.setText(jobCardDetails.getOperations().toString());
-                                binding.editTextEmployees.setText(jobCardDetails.getEmployees().toString());
-                                binding.editTextLastRecorded.setText(jobCardDetails.getLastRec());
-                                binding.editTextTarg.setText(jobCardDetails.getTarget());
-                                binding.editTextComp.setText(jobCardDetails.getCompleted());
+                                if (!mJobCard.getStatus().equals("Hold")){
+                                    binding.buttonJobCard.setText(mJobCard.getJObCardNo());
+                                    binding.editTextJobNo.setText(mJobCard.getJob_No());
+                                    binding.editTextOperations.setText(jobCardDetails.getOperations().toString());
+                                    binding.editTextEmployees.setText(jobCardDetails.getEmployees().toString());
+                                    binding.editTextLastRecorded.setText(jobCardDetails.getLastRec());
+                                    binding.editTextTarg.setText(jobCardDetails.getTarget());
+                                    binding.editTextComp.setText(jobCardDetails.getCompleted());
+                                }
+
                             }
                         });
 
@@ -858,7 +1002,6 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
         if (jobCard.getStatus().equals("Hold")){
             JobHoldToOpenWarning();
         }
-        binding.buttonJobCard.setText(jobCard.getJObCardNo());
         GetJobCardDetail();
         alertselectJobCard.dismiss();
 
