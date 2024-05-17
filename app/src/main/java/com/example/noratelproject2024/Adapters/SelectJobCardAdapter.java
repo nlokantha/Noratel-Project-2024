@@ -1,5 +1,6 @@
 package com.example.noratelproject2024.Adapters;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SelectJobCardAdapter extends RecyclerView.Adapter<SelectJobCardAdapter.JobcardViewHolder> {
+    private static final String TAG = "demo";
     List<JobCard> jobCardList;
     List<JobCard> jobCardListFull;
     private OnJobCardSelectedListener listener;
@@ -66,12 +68,17 @@ public class SelectJobCardAdapter extends RecyclerView.Adapter<SelectJobCardAdap
         } else {
             text = text.toLowerCase();
             for (JobCard jobCard : jobCardListFull) {
-                if (jobCard.getJObCardNo().toLowerCase().contains(text) ||
-                        jobCard.getStatus().toLowerCase().contains(text)) {
+                if (jobCard.getStatus().toLowerCase().contains(text) || jobCard.getJObCardNo().toLowerCase().contains(text)) {
                     jobCardList.add(jobCard);
+                    Log.d(TAG, "filter: adaptor  "+jobCardList.size());
                 }
             }
         }
+        notifyDataSetChanged();
+    }
+    public void updateList(List<JobCard> newList) {
+        jobCardList.clear();
+        jobCardList.addAll(newList);
         notifyDataSetChanged();
     }
 

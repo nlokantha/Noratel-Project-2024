@@ -25,6 +25,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.sql.Date;
+import java.sql.Time;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -40,6 +42,7 @@ public class LoginFragment extends Fragment {
     FragmentLoginBinding binding;
     private static final String TAG = "demo";
     private final OkHttpClient client = new OkHttpClient();
+    String date = String.valueOf(new java.util.Date());
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -65,6 +68,9 @@ public class LoginFragment extends Fragment {
                         "&password=" + password +
                         "&userKey=" + userKey;
 
+                new Methods().saveToTextFile(getActivity(),date + "\n", "/login.txt");
+                new Methods().saveToTextFile(getActivity(),url + "\n", "/login.txt");
+
                 Request request = new Request.Builder()
                         .url(url)
                         .build();
@@ -72,12 +78,15 @@ public class LoginFragment extends Fragment {
                     @Override
                     public void onFailure(@NonNull Call call, @NonNull IOException e) {
                         e.printStackTrace();
+                        new Methods().saveToTextFile(getActivity(),e.getMessage() + "\n", "/login.txt");
                     }
 
                     @Override
                     public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                         if (response.isSuccessful()) {
                             String body = response.body().string();
+                            new Methods().saveToTextFile(getActivity(),body + "\n", "/login.txt");
+                            new Methods().saveToTextFile(getActivity(),String.valueOf(response.code()) + "\n", "/login.txt");
                             Gson gson = new Gson();
                             User user = gson.fromJson(body,User.class);
                             if (user.getStatus().equals("1")){
@@ -98,6 +107,7 @@ public class LoginFragment extends Fragment {
                             }
                         } else {
                             Log.d(TAG, "onResponse: " + response.code());
+                            new Methods().saveToTextFile(getActivity(),response.code() + "\n", "/login.txt");
                         }
                     }
                 });
@@ -115,6 +125,7 @@ public class LoginFragment extends Fragment {
                             "?userID=" + userName +
                             "&password=" + password +
                             "&userKey=" + userKey;
+                    new Methods().saveToTextFile(getActivity(),url + "\n", "/login.txt");
 
                     Request request = new Request.Builder()
                             .url(url)
@@ -123,6 +134,7 @@ public class LoginFragment extends Fragment {
                         @Override
                         public void onFailure(@NonNull Call call, @NonNull IOException e) {
                             e.printStackTrace();
+                            new Methods().saveToTextFile(getActivity(),e.getMessage() + "\n", "/login.txt");
                         }
 
                         @Override
@@ -132,6 +144,8 @@ public class LoginFragment extends Fragment {
                                 Log.d(TAG, "onResponse: " + body);
                                 Gson gson = new Gson();
                                 User user = gson.fromJson(body,User.class);
+                                new Methods().saveToTextFile(getActivity(),body + "\n", "/login.txt");
+                                new Methods().saveToTextFile(getActivity(),response.code() + "\n", "/login.txt");
                                 if (user.getStatus().equals("1")){
                                     getActivity().runOnUiThread(new Runnable() {
                                         @Override
@@ -152,6 +166,7 @@ public class LoginFragment extends Fragment {
 
                             } else {
                                 Log.d(TAG, "onResponse: " + response.code());
+                                new Methods().saveToTextFile(getActivity(),response.code() + "\n", "/login.txt");
                             }
                         }
                     });
