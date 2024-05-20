@@ -51,7 +51,7 @@ public class SelectJobCardAdapter extends RecyclerView.Adapter<SelectJobCardAdap
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(v.getContext(), jobCard.getJObCardNo(), Toast.LENGTH_SHORT).show();
+//                Toast.makeText(v.getContext(), jobCard.getJObCardNo(), Toast.LENGTH_SHORT).show();
                 listener.onJobCardSelected(jobCard);
             }
         });

@@ -480,18 +480,24 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 mReasonCodes = reasonCodesArrayList.get(position);
-                Toast.makeText(getActivity(), mReasonCodes.getCategory(), Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getActivity(), mReasonCodes.getCategory(), Toast.LENGTH_SHORT).show();
             }
         });
         buttonConfirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 try {
-                    HoldJobCard();
+                    if (mReasonCodes != null){
+                        HoldJobCard();
+                        alertDialog.dismiss();
+                    }else {
+                        Toast.makeText(getContext(), "Please Select Reason", Toast.LENGTH_SHORT).show();
+                    }
+
                 } catch (JSONException e) {
                     throw new RuntimeException(e);
                 }
-                alertDialog.dismiss();
+
             }
         });
         buttonClose.setOnClickListener(new View.OnClickListener() {

@@ -45,7 +45,7 @@ public class SelectShiftAdapter extends RecyclerView.Adapter<SelectShiftAdapter.
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(v.getContext(), shift.getRoster(), Toast.LENGTH_SHORT).show();
+//                Toast.makeText(v.getContext(), shift.getRoster(), Toast.LENGTH_SHORT).show();
                 if (listener != null) {
                     listener.onShiftSelected(shift);
                 }

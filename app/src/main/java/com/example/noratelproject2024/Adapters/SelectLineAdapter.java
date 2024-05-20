@@ -46,7 +46,7 @@ public class SelectLineAdapter extends RecyclerView.Adapter<SelectLineAdapter.Se
             @Override
             public void onClick(View v) {
 
-                Toast.makeText(v.getContext(), lines.getSUB_UNINAME(), Toast.LENGTH_SHORT).show();
+//                Toast.makeText(v.getContext(), lines.getSUB_UNINAME(), Toast.LENGTH_SHORT).show();
                 if (listener != null) {
                     listener.onLineSelected(lines);
                 }
