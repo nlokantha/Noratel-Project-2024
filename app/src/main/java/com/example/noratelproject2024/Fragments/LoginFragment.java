@@ -67,7 +67,7 @@ public class LoginFragment extends Fragment {
                         "?userID=" + userName +
                         "&password=" + password +
                         "&userKey=" + userKey;
-
+                new Methods().saveToTextFile(getActivity(),"--------------------------------" + "\n", "/login.txt");
                 new Methods().saveToTextFile(getActivity(),date + "\n", "/login.txt");
                 new Methods().saveToTextFile(getActivity(),url + "\n", "/login.txt");
 
@@ -125,6 +125,8 @@ public class LoginFragment extends Fragment {
                             "?userID=" + userName +
                             "&password=" + password +
                             "&userKey=" + userKey;
+                    new Methods().saveToTextFile(getActivity(),"--------------------------------" + "\n", "/login.txt");
+                    new Methods().saveToTextFile(getActivity(),date + "\n", "/login.txt");
                     new Methods().saveToTextFile(getActivity(),url + "\n", "/login.txt");
 
                     Request request = new Request.Builder()

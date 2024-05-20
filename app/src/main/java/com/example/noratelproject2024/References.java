@@ -33,14 +33,10 @@ public class References {
     public static class HoldToOpen {
         public static String methodName = url + "HoldToOpen";
     }
-    public static class NewToOpen {
+    public static class NewToOpen{
         public static String methodName = url + "NewToOpen";
     }
     public static class SearchByEmpNo {
         public static String methodName = url + "SearchByEmpNo?username=";
     }
-
-
-
-
 }

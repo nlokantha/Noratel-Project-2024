@@ -15,10 +15,11 @@ import com.example.noratelproject2024.R;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Handler;
 
 public class SelectJobCardAdapter extends RecyclerView.Adapter<SelectJobCardAdapter.JobcardViewHolder> {
     private static final String TAG = "demo";
-    List<JobCard> jobCardList;
+    List<JobCard> mjobCardList;
     List<JobCard> jobCardListFull;
     private OnJobCardSelectedListener listener;
     public interface OnJobCardSelectedListener{
@@ -26,9 +27,9 @@ public class SelectJobCardAdapter extends RecyclerView.Adapter<SelectJobCardAdap
     }
 
     public SelectJobCardAdapter(List<JobCard> jobCardList, OnJobCardSelectedListener listener) {
-        this.jobCardList = jobCardList;
+        this.mjobCardList = jobCardList;
         this.listener = listener;
-        jobCardListFull = new ArrayList<>(jobCardList);
+        jobCardListFull = new ArrayList<>(mjobCardList);
     }
 
     @NonNull
@@ -41,7 +42,7 @@ public class SelectJobCardAdapter extends RecyclerView.Adapter<SelectJobCardAdap
     @Override
     public void onBindViewHolder(@NonNull JobcardViewHolder holder, int position) {
 
-        JobCard jobCard = jobCardList.get(position);
+        JobCard jobCard = mjobCardList.get(position);
         holder.textViewJobCardNo.setText(jobCard.getJObCardNo());
         holder.textViewStatus.setText(jobCard.getStatus());
         holder.textViewJC_Serial_No.setText(jobCard.getJC_Serial_No());
@@ -58,27 +59,30 @@ public class SelectJobCardAdapter extends RecyclerView.Adapter<SelectJobCardAdap
 
     @Override
     public int getItemCount() {
-        return jobCardList.size();
+        return mjobCardList.size();
     }
 
     public void filter(String text) {
-        jobCardList.clear();
+        jobCardListFull = new ArrayList<>(mjobCardList);
+        mjobCardList.clear();
         if (text.isEmpty()) {
-            jobCardList.addAll(jobCardListFull);
+            mjobCardList.addAll(jobCardListFull);
         } else {
             text = text.toLowerCase();
+            Log.d(TAG, "filter: jobCardListFull" + jobCardListFull.size());
             for (JobCard jobCard : jobCardListFull) {
-                if (jobCard.getStatus().toLowerCase().contains(text) || jobCard.getJObCardNo().toLowerCase().contains(text)) {
-                    jobCardList.add(jobCard);
-                    Log.d(TAG, "filter: adaptor  "+jobCardList.size());
+                Log.d(TAG, "filter: jobCardListFull" + jobCardListFull.size());
+                if (jobCard.getJObCardNo().toLowerCase().contains(text)) {
+                    mjobCardList.add(jobCard);
+                    Log.d(TAG, "filter: adaptor  "+mjobCardList.size());
                 }
             }
         }
         notifyDataSetChanged();
     }
     public void updateList(List<JobCard> newList) {
-        jobCardList.clear();
-        jobCardList.addAll(newList);
+        mjobCardList.clear();
+        mjobCardList.addAll(newList);
         notifyDataSetChanged();
     }
 
