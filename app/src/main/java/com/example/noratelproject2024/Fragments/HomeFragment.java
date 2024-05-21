@@ -1191,7 +1191,6 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
                 e.printStackTrace();
                 new Methods().saveToTextFile(getActivity(),e.getMessage() + "\n", "/HoldToOpen.txt");
             }
-
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (response.isSuccessful()) {
@@ -1207,8 +1206,6 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
             }
         });
     }
-
-
     private void datePick() {
         Calendar calendar = Calendar.getInstance();
         int YEAR = calendar.get(Calendar.YEAR);

@@ -13,6 +13,15 @@
         android:elevation="10dp">
 
         <ImageView
+            android:id="@+id/imageView3"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="10dp"
+            android:src="@drawable/logo1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
             android:id="@+id/imageViewSetting"
             android:layout_width="35dp"
             android:layout_height="35dp"
@@ -46,6 +55,16 @@
             app:layout_constraintEnd_toStartOf="@+id/imageViewSetting"
             app:layout_constraintTop_toBottomOf="@+id/textViewDate" />
 
+        <ImageView
+            android:id="@+id/imageView6"
+            android:layout_width="125dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:src="@drawable/nlk_e_jobcard"
+            app:layout_constraintBottom_toBottomOf="@+id/imageView3"
+            app:layout_constraintStart_toEndOf="@+id/imageView3"
+            app:layout_constraintTop_toTopOf="@+id/imageView3" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
     <View
         android:layout_width="match_parent"
@@ -61,11 +80,11 @@
             android:id="@+id/textView12"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
             android:layout_weight="0.5"
             android:text="Line :"
-            android:layout_marginStart="5dp"
             android:textColor="@color/blue"
-            android:textSize="20sp"
+            android:textSize="16sp"
             android:textStyle="bold" />
 
         <TextView
@@ -73,14 +92,14 @@
             android:layout_width="50dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="N/A"
             android:maxLines="1"
             android:scrollHorizontally="true"
             android:singleLine="true"
+            android:text="N/A"
 
 
             android:textColor="@color/blue"
-            android:textSize="20sp"
+            android:textSize="16sp"
             android:textStyle="bold" />
 
         <TextView
@@ -90,7 +109,7 @@
             android:layout_weight="0.5"
             android:text="Shift : "
             android:textColor="@color/blue"
-            android:textSize="20sp"
+            android:textSize="16sp"
             android:textStyle="bold" />
 
         <TextView
@@ -98,12 +117,12 @@
             android:layout_width="50dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="N/A"
             android:maxLines="1"
             android:scrollHorizontally="true"
             android:singleLine="true"
+            android:text="N/A"
             android:textColor="@color/blue"
-            android:textSize="20sp"
+            android:textSize="16sp"
             android:textStyle="bold" />
     </LinearLayout>
 
@@ -116,11 +135,11 @@
             android:id="@+id/textView16"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:layout_marginStart="5dp"
+            android:layout_weight="1"
             android:text="Job Card"
             android:textColor="@color/blue"
-            android:textSize="20sp"
+            android:textSize="16sp"
             android:textStyle="bold" />
 
         <TextView
@@ -131,7 +150,7 @@
             android:gravity="center_horizontal"
             android:text="Date and Time"
             android:textColor="@color/blue"
-            android:textSize="20sp"
+            android:textSize="16sp"
             android:textStyle="bold" />
     </LinearLayout>
 
@@ -186,7 +205,7 @@
             android:layout_marginStart="5dp"
             android:text="Job No"
             android:textColor="@color/blue"
-            android:textSize="20sp"
+            android:textSize="16sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -198,7 +217,7 @@
             android:layout_marginStart="5dp"
             android:text="Operations"
             android:textColor="@color/blue"
-            android:textSize="20sp"
+            android:textSize="16sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="@+id/guideline2"
             app:layout_constraintTop_toTopOf="parent" />
@@ -217,7 +236,7 @@
             android:layout_marginStart="5dp"
             android:text="Employees"
             android:textColor="@color/blue"
-            android:textSize="20sp"
+            android:textSize="16sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/editTextJobNo" />
@@ -232,21 +251,21 @@
             android:background="@drawable/edittext_background"
             android:backgroundTint="@color/blue"
             android:clickable="false"
-            android:ems="10"
-            android:gravity="center"
+            android:cursorVisible="false"
 
+            android:ellipsize="end"
+            android:ems="10"
             android:focusable="true"
             android:focusableInTouchMode="false"
+            android:gravity="center"
             android:inputType="none"
-            android:cursorVisible="false"
-            android:longClickable="false"
-            android:textIsSelectable="false"
 
+            android:longClickable="false"
+            android:padding="10dp"
             android:scrollHorizontally="true"
             android:singleLine="true"
-            android:ellipsize="end"
-            android:padding="10dp"
             android:textColor="@color/white"
+            android:textIsSelectable="false"
             app:layout_constraintEnd_toStartOf="@+id/guideline2"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView11" />
@@ -286,7 +305,7 @@
         <EditText
             android:id="@+id/editTextEmployees"
             android:layout_width="0dp"
-            android:layout_height="44dp"
+            android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
             android:layout_marginEnd="5dp"
             android:layout_marginBottom="5dp"
@@ -332,7 +351,7 @@
             android:layout_marginStart="5dp"
             android:text="Last Recorded"
             android:textColor="@color/blue"
-            android:textSize="20sp"
+            android:textSize="16sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -343,7 +362,7 @@
             android:layout_height="wrap_content"
             android:text="Targ."
             android:textColor="@color/blue"
-            android:textSize="20sp"
+            android:textSize="16sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="@+id/textView7"
             app:layout_constraintEnd_toEndOf="@+id/editTextTarg"
@@ -357,7 +376,7 @@
             android:layout_height="wrap_content"
             android:text="Comp."
             android:textColor="@color/blue"
-            android:textSize="20sp"
+            android:textSize="16sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="@+id/textView18"
             app:layout_constraintEnd_toEndOf="@+id/editTextComp"
@@ -380,7 +399,7 @@
             android:inputType="none"
             android:longClickable="false"
 
-            android:padding="10dp"
+            android:padding="5dp"
             android:scrollHorizontally="true"
             android:singleLine="true"
             android:textColor="@color/blue"
@@ -446,7 +465,7 @@
             android:layout_marginStart="5dp"
             android:text="Quantity"
             android:textColor="@color/blue"
-            android:textSize="20sp"
+            android:textSize="16sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/editTextLastRecorded" />
@@ -510,7 +529,7 @@
             android:layout_marginStart="5dp"
             android:text="Serial Number"
             android:textColor="@color/blue"
-            android:textSize="20sp"
+            android:textSize="16sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/editTextQuantity" />
