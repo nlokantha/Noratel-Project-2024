@@ -53,8 +53,8 @@ public class LoginFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-//        binding.editTextUserName.setText("test");
-//        binding.editTextPassword.setText("test123");
+        binding.editTextUserName.setText("test");
+        binding.editTextPassword.setText("test123");
         binding.editTextUserName.requestFocus();
 
         binding.buttonLogin.setOnClickListener(new View.OnClickListener() {
@@ -176,12 +176,6 @@ public class LoginFragment extends Fragment {
 
                 }
                 return false;
-            }
-        });
-        binding.buttonTerms.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(getActivity(), "Check C3 Home Page ! ", Toast.LENGTH_SHORT).show();
             }
         });
     }

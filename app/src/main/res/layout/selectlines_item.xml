@@ -27,6 +27,8 @@
                 android:layout_height="wrap_content"
                 android:text="Sub Name"
                 android:textColor="@color/white"
+                android:textSize="20sp"
+                android:textStyle="bold"
                 android:padding="5dp"/>
 
         </LinearLayout>

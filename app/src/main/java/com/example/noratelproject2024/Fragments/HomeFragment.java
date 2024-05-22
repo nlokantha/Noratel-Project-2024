@@ -1,6 +1,7 @@
 package com.example.noratelproject2024.Fragments;
 
 import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -28,6 +29,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.example.noratelproject2024.Adapters.SelectJobCardAdapter;
@@ -107,6 +109,7 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
     ReasonCodes mReasonCodes;
     int count = 0;
     String search;
+    String dateAndTime;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -119,6 +122,7 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
         super.onViewCreated(view, savedInstanceState);
         dateAndTime();
         String jobcardName = binding.buttonJobCard.getText().toString();
+        String quantity = binding.editTextQuantity.getText().toString();
         if (jobcardName.equals("-Not Selected-")){
             binding.buttonClear.setEnabled(false);
             binding.buttonSave.setEnabled(false);
@@ -134,7 +138,7 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
         binding.buttonDatePicker.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                datePick();
+                showDatePicker();
             }
         });
         binding.buttonPlus.setOnClickListener(new View.OnClickListener() {
@@ -152,7 +156,7 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
             @Override
             public void onClick(View v) {
                 String quantity = binding.editTextQuantity.getText().toString();
-                if (!quantity.isEmpty()) {
+                if (!quantity.isEmpty() && !quantity.equals("0")) {
                     count = Integer.valueOf(quantity);
                     count--;
                     binding.editTextQuantity.setText(String.valueOf(count));
@@ -246,6 +250,8 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
         builder.setView(view);
 
         AlertDialog alert = builder.create();
+        alert.getWindow().setGravity(Gravity.CENTER);
+        alert.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         alert.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         alert.show();
 
@@ -1206,7 +1212,7 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
             }
         });
     }
-    private void datePick() {
+    private void showDatePicker() {
         Calendar calendar = Calendar.getInstance();
         int YEAR = calendar.get(Calendar.YEAR);
         int MONTH = calendar.get(Calendar.MONTH);
@@ -1215,12 +1221,28 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
         DatePickerDialog datePickerDialog = new DatePickerDialog(getActivity(), new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                String date = year + "-" + month + "-" + dayOfMonth;
-                binding.buttonDatePicker.setText(date);
+                dateAndTime = year + "-" + (month + 1) + "-" + dayOfMonth;
+                showTimePicker();
             }
         }, YEAR, MONTH, DATE);
         datePickerDialog.show();
-
+    }
+    private void showTimePicker() {
+        final Calendar calendar = Calendar.getInstance();
+        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+        int minute = calendar.get(Calendar.MINUTE);
+        TimePickerDialog timePickerDialog = new TimePickerDialog(getActivity(), new TimePickerDialog.OnTimeSetListener() {
+            @Override
+            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                boolean isPM = (hourOfDay >= 12);
+                int hourIn12Format = hourOfDay % 12;
+                if (hourIn12Format == 0) hourIn12Format = 12;
+                String amPm = isPM ? "PM" : "AM";
+                dateAndTime += " " + String.format("%02d:%02d %s", hourIn12Format, minute, amPm);
+                binding.buttonDatePicker.setText(dateAndTime);
+            }
+        }, hour, minute, false);
+        timePickerDialog.show();
     }
 
     HomeFragmentListener mListener;
