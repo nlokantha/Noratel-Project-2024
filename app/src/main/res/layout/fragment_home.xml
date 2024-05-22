@@ -29,7 +29,7 @@
             android:layout_marginEnd="10dp"
             android:text="Date"
             android:textColor="@color/light_red"
-            android:textSize="20sp"
+            android:textSize="16sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toStartOf="@+id/imageViewSetting"
             app:layout_constraintTop_toTopOf="parent" />
@@ -41,14 +41,14 @@
             android:layout_marginEnd="10dp"
             android:text="Time"
             android:textColor="@color/light_red"
-            android:textSize="20sp"
+            android:textSize="16dp"
             android:textStyle="bold"
             app:layout_constraintEnd_toStartOf="@+id/imageViewSetting"
             app:layout_constraintTop_toBottomOf="@+id/textViewDate" />
 
         <ImageView
             android:id="@+id/imageView3"
-            android:layout_width="150dp"
+            android:layout_width="200dp"
             android:layout_height="50dp"
             android:src="@drawable/home_logo"
             app:layout_constraintStart_toStartOf="parent"
@@ -538,83 +538,86 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView21" />
 
-        <Button
-            android:id="@+id/buttonHold"
-            style="@style/Widget.Material3.Button"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="5dp"
-            android:layout_marginEnd="5dp"
-            android:layout_marginBottom="5dp"
-            android:backgroundTint="@color/light_yellow"
-            android:text="Hold"
-            android:padding="10dp"
-            app:cornerRadius="10dp"
-            app:icon="@drawable/holding"
-            app:iconGravity="textStart"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/guideline3"
-            app:layout_constraintStart_toStartOf="parent" />
-
-        <Button
-            android:id="@+id/buttonComplete"
-            style="@style/Widget.Material3.Button"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="5dp"
-            android:layout_marginEnd="5dp"
-            android:layout_marginBottom="5dp"
-            android:backgroundTint="@color/light_blue"
-            android:text="Complete"
-            android:padding="10dp"
-            app:cornerRadius="10dp"
-            app:icon="@drawable/check"
-            app:iconGravity="textStart"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/guideline3" />
-
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline3"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:layout_constraintGuide_begin="205dp" />
-
-        <Button
-            android:id="@+id/buttonClear"
-            style="@style/Widget.Material3.Button"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="5dp"
-            android:layout_marginEnd="5dp"
-            android:layout_marginBottom="5dp"
-            android:backgroundTint="@color/light_red"
-            android:text="Clear"
-            android:padding="10dp"
-            app:cornerRadius="10dp"
-            app:icon="@drawable/close"
-            app:iconGravity="textStart"
-            app:layout_constraintBottom_toTopOf="@+id/buttonHold"
-            app:layout_constraintEnd_toStartOf="@+id/guideline3"
-            app:layout_constraintStart_toStartOf="parent" />
-
-        <Button
-            android:id="@+id/buttonSave"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="5dp"
-            android:layout_marginEnd="5dp"
-            android:layout_marginBottom="5dp"
-            android:backgroundTint="@color/light_green"
-            android:text="Save"
-            android:padding="10dp"
-            app:cornerRadius="10dp"
-            app:icon="@drawable/save"
-            app:iconGravity="textStart"
-            app:layout_constraintBottom_toTopOf="@+id/buttonComplete"
+            android:padding="5dp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/guideline3" />
+            app:layout_constraintStart_toStartOf="parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/buttonClear"
+                    style="@style/Widget.Material3.Button"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="10dp"
+                    android:layout_weight="1"
+                    android:backgroundTint="@color/light_red"
+                    android:padding="10dp"
+                    android:text="Clear"
+                    app:cornerRadius="10dp"
+                    app:icon="@drawable/close"
+                    app:iconGravity="textStart" />
+
+                <Button
+                    android:id="@+id/buttonSave"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:backgroundTint="@color/light_green"
+                    android:padding="10dp"
+                    android:text="Save"
+                    app:cornerRadius="10dp"
+                    app:icon="@drawable/save"
+                    app:iconGravity="textStart" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/buttonHold"
+                    style="@style/Widget.Material3.Button"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="10dp"
+                    android:layout_weight="1"
+                    android:backgroundTint="@color/light_yellow"
+                    android:padding="10dp"
+                    android:text="Hold"
+                    app:cornerRadius="10dp"
+                    app:icon="@drawable/holding"
+                    app:iconGravity="textStart" />
+
+                <Button
+                    android:id="@+id/buttonComplete"
+                    style="@style/Widget.Material3.Button"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:backgroundTint="@color/light_blue"
+                    android:padding="10dp"
+                    android:text="Complete"
+                    app:cornerRadius="10dp"
+                    app:icon="@drawable/check"
+                    app:iconGravity="textStart" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+
+
+
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 

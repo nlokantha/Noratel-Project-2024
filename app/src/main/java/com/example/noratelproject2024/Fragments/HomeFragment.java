@@ -349,8 +349,8 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
         builder.setView(view);
 
         alertselectJobCard = builder.create();
-        alertselectJobCard.getWindow().setGravity(Gravity.BOTTOM);
-        alertselectJobCard.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        alertselectJobCard.getWindow().setGravity(Gravity.CENTER);
+        alertselectJobCard.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         alertselectJobCard.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         alertselectJobCard.show();
 
