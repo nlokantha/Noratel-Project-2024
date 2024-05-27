@@ -996,6 +996,8 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
                                     binding.buttonSave.setEnabled(true);
                                     binding.buttonHold.setEnabled(true);
                                     binding.buttonComplete.setEnabled(true);
+                                }else {
+                                    JobHoldToOpenWarning();
                                 }
                             }
                         });
@@ -1336,12 +1338,9 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
     public void onJobCardSelected(JobCard jobCard) {
         this.mJobCard = jobCard;
         GetJobCardDetail();
-        if (jobCard.getStatus().equals("Hold")) {
-            JobHoldToOpenWarning();
-        }
-
-
-
+//        if (jobCard.getStatus().equals("Hold")) {
+//            JobHoldToOpenWarning();
+//        }
         alertselectJobCard.dismiss();
 
     }
