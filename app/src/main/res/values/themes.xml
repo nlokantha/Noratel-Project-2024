@@ -3,8 +3,26 @@
     <style name="Base.Theme.NoratelProject2024" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
-         <item name="colorPrimary">#bfbfbf</item>
+<!--         <item name="colorPrimary">#bfbfbf</item>-->
+        <item name="android:statusBarColor">#bfbfbf</item>
     </style>
 
     <style name="Theme.NoratelProject2024" parent="Base.Theme.NoratelProject2024" />
+
+
+
+    <style name="CustomAlertDialog" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="android:layout_width">250dp</item>
+        <item name="android:windowMinWidthMajor">0%</item>
+        <item name="android:windowMinWidthMinor">0%</item>
+        <item name="android:backgroundDimEnabled">true</item>
+    </style>
+
+    <style name="CustomSearchJobCard" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="android:layout_width">275dp</item>
+        <item name="android:windowMinWidthMajor">0%</item>
+        <item name="android:windowMinWidthMinor">0%</item>
+        <item name="android:backgroundDimEnabled">true</item>
+    </style>
+
 </resources>

@@ -374,33 +374,35 @@
 
         <EditText
             android:id="@+id/editTextLastRecorded"
-            android:layout_width="167dp"
+            android:layout_width="0dp"
             android:layout_height="43dp"
             android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp"
             android:background="@drawable/edittext_background"
             android:cursorVisible="false"
-            android:ellipsize="end"
 
+            android:ellipsize="end"
             android:ems="10"
             android:focusable="true"
             android:focusableInTouchMode="false"
             android:gravity="center"
             android:inputType="none"
-            android:longClickable="false"
 
+            android:longClickable="false"
             android:padding="5dp"
             android:scrollHorizontally="true"
             android:singleLine="true"
             android:textColor="@color/blue"
             android:textIsSelectable="false"
+            app:layout_constraintEnd_toStartOf="@+id/editTextTarg"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView7" />
 
         <EditText
             android:id="@+id/editTextTarg"
-            android:layout_width="80dp"
+            android:layout_width="70dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="10dp"
+            android:layout_marginEnd="5dp"
             android:background="@drawable/edittext_background"
             android:cursorVisible="false"
 
@@ -423,7 +425,7 @@
 
         <EditText
             android:id="@+id/editTextComp"
-            android:layout_width="80dp"
+            android:layout_width="70dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="5dp"
             android:background="@drawable/edittext_background"

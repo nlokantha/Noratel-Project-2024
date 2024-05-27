@@ -86,6 +86,7 @@ public class LoginFragment extends Fragment {
                     public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                         if (response.isSuccessful()) {
                             String body = response.body().string();
+                            Log.d(TAG, "onResponse: login Response "+body);
                             new Methods().saveToTextFile(getActivity(),body + "\n", "/login.txt");
                             new Methods().saveToTextFile(getActivity(),String.valueOf(response.code()) + "\n", "/login.txt");
                             Gson gson = new Gson();

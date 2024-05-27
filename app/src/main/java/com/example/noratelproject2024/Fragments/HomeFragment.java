@@ -16,10 +16,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Handler;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -128,6 +130,9 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
             binding.buttonSave.setEnabled(false);
             binding.buttonHold.setEnabled(false);
             binding.buttonComplete.setEnabled(false);
+        }
+        if (mUser != null){
+            selectLineCustomDialog();
         }
         binding.imageViewSetting.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -305,7 +310,7 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
 
     private void selectLineCustomDialog() {
         getLines();
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext(),R.style.CustomAlertDialog);
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.custom_select_line, null);
         builder.setView(view);
@@ -313,6 +318,11 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
         alertselectLine = builder.create();
         alertselectLine.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         alertselectLine.show();
+
+        WindowManager.LayoutParams layoutParams = alertselectLine.getWindow().getAttributes();
+        layoutParams.width = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,300,getResources().getDisplayMetrics());
+        layoutParams.gravity = Gravity.CENTER;
+        alertselectLine.getWindow().setAttributes(layoutParams);
 
         RecyclerView recyclerView = view.findViewById(R.id.recyclerView);
         progressBarSelectLine = view.findViewById(R.id.progressBarSelectLine);
@@ -324,7 +334,7 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
 
     private void selectShiftCustomDialog() {
         getShift();
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext(),R.style.CustomAlertDialog);
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.custom_select_shift, null);
         builder.setView(view);
@@ -332,6 +342,11 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
         alertselectShift = builder.create();
         alertselectShift.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         alertselectShift.show();
+
+        WindowManager.LayoutParams layoutParams = alertselectShift.getWindow().getAttributes();
+        layoutParams.width = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,300,getResources().getDisplayMetrics());
+        layoutParams.gravity = Gravity.CENTER;
+        alertselectShift.getWindow().setAttributes(layoutParams);
 
         RecyclerView recyclerView = view.findViewById(R.id.recyclerView);
         progressBarSelectShift = view.findViewById(R.id.progressBarSelectShift);
@@ -343,16 +358,20 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
 
     private void selectJobCardCustomDialog() {
         getJobCard();
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext(),R.style.CustomSearchJobCard);
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.custom_search_jobcard, null);
         builder.setView(view);
 
         alertselectJobCard = builder.create();
-        alertselectJobCard.getWindow().setGravity(Gravity.CENTER);
-        alertselectJobCard.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         alertselectJobCard.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         alertselectJobCard.show();
+
+        // Center the dialog and set the width to 250dp
+        WindowManager.LayoutParams layoutParams = alertselectJobCard.getWindow().getAttributes();
+        layoutParams.width = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 300, getResources().getDisplayMetrics());
+        layoutParams.gravity = Gravity.CENTER;
+        alertselectJobCard.getWindow().setAttributes(layoutParams);
 
         RecyclerView recyclerView = view.findViewById(R.id.recyclerView);
         progressBarSearchJobCard = view.findViewById(R.id.progressBarSearchJobCard);
@@ -388,7 +407,7 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
     }
 
     private void saveJobCardWarning() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext(),R.style.CustomAlertDialog);
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.custom_warning, null);
         builder.setView(view);
@@ -396,6 +415,12 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
         AlertDialog alertDialog = builder.create();
         alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         alertDialog.show();
+
+        WindowManager.LayoutParams layoutParams = alertDialog.getWindow().getAttributes();
+        layoutParams.width = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,300,getResources().getDisplayMetrics());
+        layoutParams.gravity = Gravity.CENTER;
+        alertDialog.getWindow().setAttributes(layoutParams);
+
 
         Button buttonClose = view.findViewById(R.id.buttonClose);
         Button buttonConfirm = view.findViewById(R.id.buttonActivate);
@@ -422,7 +447,7 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
     }
 
     private void clearEverything() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext(),R.style.CustomAlertDialog);
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.custom_warning, null);
         builder.setView(view);
@@ -430,6 +455,11 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
         AlertDialog alertDialog = builder.create();
         alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         alertDialog.show();
+
+        WindowManager.LayoutParams layoutParams = alertDialog.getWindow().getAttributes();
+        layoutParams.width = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,300,getResources().getDisplayMetrics());
+        layoutParams.gravity = Gravity.CENTER;
+        alertDialog.getWindow().setAttributes(layoutParams);
 
         Button buttonClose = view.findViewById(R.id.buttonClose);
         Button buttonConfirm = view.findViewById(R.id.buttonActivate);
@@ -468,7 +498,7 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
 
     private void SelectReasonCode() {
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext(),R.style.CustomAlertDialog);
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.custom_hold_dialog, null);
         builder.setView(view);
@@ -476,6 +506,11 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
         AlertDialog alertDialog = builder.create();
         alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         alertDialog.show();
+
+        WindowManager.LayoutParams layoutParams = alertDialog.getWindow().getAttributes();
+        layoutParams.width = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,300,getResources().getDisplayMetrics());
+        layoutParams.gravity = Gravity.CENTER;
+        alertDialog.getWindow().setAttributes(layoutParams);
 
         AutoCompleteTextView autoCompleteTextView = view.findViewById(R.id.autoCompleteTextViewHold);
         ArrayAdapter<ReasonCodes> adapter = new ArrayAdapter<ReasonCodes>(getActivity(), R.layout.dropdown_item, reasonCodesArrayList);
@@ -516,7 +551,7 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
     }
 
     private void CompleteWarning() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext(),R.style.CustomAlertDialog);
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.custom_warning, null);
         builder.setView(view);
@@ -524,6 +559,11 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
         AlertDialog alertDialog = builder.create();
         alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         alertDialog.show();
+
+        WindowManager.LayoutParams layoutParams = alertDialog.getWindow().getAttributes();
+        layoutParams.width = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,300,getResources().getDisplayMetrics());
+        layoutParams.gravity = Gravity.CENTER;
+        alertDialog.getWindow().setAttributes(layoutParams);
 
         Button buttonClose = view.findViewById(R.id.buttonClose);
         Button buttonConfirm = view.findViewById(R.id.buttonActivate);
@@ -551,7 +591,7 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
     }
 
     private void SelectNextWarning() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext(),R.style.CustomAlertDialog);
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.custom_selectnext, null);
         builder.setView(view);
@@ -559,6 +599,11 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
         AlertDialog alertDialog = builder.create();
         alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         alertDialog.show();
+
+        WindowManager.LayoutParams layoutParams = alertDialog.getWindow().getAttributes();
+        layoutParams.width = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,300,getResources().getDisplayMetrics());
+        layoutParams.gravity = Gravity.CENTER;
+        alertDialog.getWindow().setAttributes(layoutParams);
 
         Button buttonClose = view.findViewById(R.id.buttonClose);
         Button buttonSelectNext = view.findViewById(R.id.buttonSelectNext);
@@ -597,7 +642,8 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
     }
 
     private void JobHoldToOpenWarning() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext(),R.style.CustomAlertDialog);
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.custom_job_hold_warning, null);
         builder.setView(view);
@@ -605,6 +651,11 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
         AlertDialog alertDialog = builder.create();
         alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         alertDialog.show();
+
+        WindowManager.LayoutParams layoutParams = alertDialog.getWindow().getAttributes();
+        layoutParams.width = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,300,getResources().getDisplayMetrics());
+        layoutParams.gravity = Gravity.CENTER;
+        alertDialog.getWindow().setAttributes(layoutParams);
 
         Button buttonClose = view.findViewById(R.id.buttonClose);
         Button buttonActivate = view.findViewById(R.id.buttonActivate);
@@ -616,11 +667,13 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
                     HoldToOpen();
                     binding.buttonJobCard.setText(mJobCard.getJObCardNo());
                     binding.editTextJobNo.setText(mJobCard.getJob_No());
-                    binding.editTextOperations.setText(jobCardDetails.getOperations().toString());
-                    binding.editTextEmployees.setText(jobCardDetails.getEmployees().toString());
-                    binding.editTextLastRecorded.setText(jobCardDetails.getLastRec());
-                    binding.editTextTarg.setText(jobCardDetails.getTarget());
-                    binding.editTextComp.setText(jobCardDetails.getCompleted());
+                    if (jobCardDetails != null){
+                        binding.editTextOperations.setText(jobCardDetails.getOperations().toString());
+                        binding.editTextEmployees.setText(jobCardDetails.getEmployees().toString());
+                        binding.editTextLastRecorded.setText(jobCardDetails.getLastRec());
+                        binding.editTextTarg.setText(jobCardDetails.getTarget());
+                        binding.editTextComp.setText(jobCardDetails.getCompleted());
+                    }
 
                     binding.buttonClear.setEnabled(true);
                     binding.buttonSave.setEnabled(true);
@@ -645,7 +698,7 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
     }
 
     private void NumberPlates() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext(),R.style.CustomAlertDialog);
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.custom_number_plate, null);
         builder.setView(view);
@@ -653,6 +706,13 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
         AlertDialog alertDialog = builder.create();
         alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         alertDialog.show();
+
+        // Center the dialog and set the width to 250dp
+        WindowManager.LayoutParams layoutParams = alertDialog.getWindow().getAttributes();
+        layoutParams.width = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 250, getResources().getDisplayMetrics());
+        layoutParams.gravity = Gravity.CENTER;
+        alertDialog.getWindow().setAttributes(layoutParams);
+
 
         EditText editTextQ = view.findViewById(R.id.editTextQ);
         Button button1, button2, button3, button4, button5, button6, button7, button8, button9, button0;
@@ -937,7 +997,6 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
                                     binding.buttonHold.setEnabled(true);
                                     binding.buttonComplete.setEnabled(true);
                                 }
-
                             }
                         });
 
@@ -1056,6 +1115,10 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
         jsonBody.put("QtyCompleted", quantity);
         jsonBody.put("Status", mJobCard.getStatus());
         jsonBody.put("Username", mUser.getUsername());
+        jsonBody.put("JobNo", mJobCard.getJob_No());
+        jsonBody.put("Line", mLines.getSUB_UNINAME());
+        jsonBody.put("Operations",jobCardDetails.getOperations());
+
 
         RequestBody requestBody = RequestBody.create(jsonBody.toString(), MediaType.parse("application/json"));
         Request request = new Request.Builder()
@@ -1078,7 +1141,7 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (response.isSuccessful()) {
                     String body = response.body().string();
-                    Log.d(TAG, "onResponse: POST " + body);
+                    Log.d(TAG, "onResponse: Save Job Card Response  " + body);
                     new Methods().saveToTextFile(getActivity(),body + "\n", "/saveJobCard.txt");
                     new Methods().saveToTextFile(getActivity(),response.code() + "\n", "/saveJobCard.txt");
 
@@ -1258,6 +1321,7 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
         this.mShift = selectedShift;
         binding.textViewShift.setText(selectedShift.getRoster());
         alertselectShift.dismiss();
+        selectJobCardCustomDialog();
     }
 
     @Override
@@ -1265,16 +1329,17 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
         this.mLines = selectedLine;
         binding.textViewLine.setText(selectedLine.getSUB_UNINAME());
         alertselectLine.dismiss();
-
+        selectShiftCustomDialog();
     }
 
     @Override
     public void onJobCardSelected(JobCard jobCard) {
         this.mJobCard = jobCard;
+        GetJobCardDetail();
         if (jobCard.getStatus().equals("Hold")) {
             JobHoldToOpenWarning();
         }
-        GetJobCardDetail();
+
 
 
         alertselectJobCard.dismiss();
