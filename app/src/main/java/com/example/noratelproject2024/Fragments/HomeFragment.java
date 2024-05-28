@@ -13,6 +13,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.room.Room;
 
 import android.os.Handler;
 import android.util.Log;
@@ -38,6 +39,7 @@ import com.example.noratelproject2024.Adapters.SelectJobCardAdapter;
 import com.example.noratelproject2024.Adapters.SelectLineAdapter;
 import com.example.noratelproject2024.Adapters.SelectShiftAdapter;
 import com.example.noratelproject2024.Controls.Methods;
+import com.example.noratelproject2024.Database.AppDatabase;
 import com.example.noratelproject2024.Models.JobCard;
 import com.example.noratelproject2024.Models.JobCardDetails;
 import com.example.noratelproject2024.Models.Lines;
@@ -57,6 +59,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Iterator;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -95,6 +98,7 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
     private final OkHttpClient client = new OkHttpClient();
     private static final String TAG = "demo";
     ArrayList<Lines> linesArrayList = new ArrayList<>();
+    ArrayList<Lines> linesArrayListFull = new ArrayList<>();
     ArrayList<Shift> shiftArrayList = new ArrayList<>();
     ArrayList<JobCard> jobCardArrayList = new ArrayList<>();
     ArrayList<JobCard> jobCardArrayListSearch = new ArrayList<>();
@@ -112,6 +116,7 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
     int count = 0;
     String search;
     String dateAndTime;
+    AppDatabase db;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -123,6 +128,17 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         dateAndTime();
+
+        db = Room.databaseBuilder(getActivity(), AppDatabase.class,"lines.db")
+                .fallbackToDestructiveMigration()
+                .allowMainThreadQueries()
+                .build();
+
+        /*
+        AppDatabase db = Room.databaseBuilder(getApplicationContext(),
+        AppDatabase.class, "database-name").build();
+         */
+
         String jobcardName = binding.buttonJobCard.getText().toString();
         String quantity = binding.editTextQuantity.getText().toString();
         if (jobcardName.equals("-Not Selected-")){
@@ -817,7 +833,6 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
         });
 
     }
-
     private void getLines() {
         linesArrayList.clear();
         String url = References.GetLines.methodName;
@@ -842,7 +857,28 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
                     Log.d(TAG, "onResponse: " + body);
                     Gson gson = new Gson();
                     Lines[] lines = gson.fromJson(body, Lines[].class);
-                    linesArrayList.addAll(Arrays.asList(lines));
+
+                    linesArrayList.addAll(db.linesDao().getAllFromUser(mUser.getUsername()));
+                    Log.d(TAG, "onResponse: Database list"+db.linesDao().getAll().size());
+                    Log.d(TAG, "onResponse: Database list"+db.linesDao().getAll().toString());
+
+                    linesArrayListFull.addAll(Arrays.asList(lines));
+                    linesArrayListFull.removeAll(linesArrayList);
+
+                    Iterator<Lines> iterator = linesArrayListFull.iterator();
+                    while (iterator.hasNext()) {
+                        Lines lines1 = iterator.next();
+                        for (Lines lines2 : linesArrayList) {
+                            if (lines1.getSUB_UNINAME().equals(lines2.getSUB_UNINAME())) {
+                                iterator.remove();
+                                break;
+                            }
+                        }
+                    }
+
+
+                    linesArrayList.addAll(linesArrayListFull);
+                    Log.d(TAG, "onResponse: arraysize of lines "+linesArrayList.size());
                     new Methods().saveToTextFile(getActivity(),body + "\n", "/getLines.txt");
                     new Methods().saveToTextFile(getActivity(),response.code() + "\n", "/getLines.txt");
                     getActivity().runOnUiThread(new Runnable() {
@@ -977,7 +1013,7 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
                         Log.d(TAG, "onResponse: job Card details " + body);
                         Gson gson = new Gson();
                         jobCardDetails = gson.fromJson(body, JobCardDetails.class);
-                        Log.d(TAG, "onResponse: ggrgrrrrrrr" + jobCardDetails);
+                        Log.d(TAG, "onResponse: jobCardDetails" + jobCardDetails);
                         new Methods().saveToTextFile(getActivity(),body + "\n", "/getJobCardDetail.txt");
                         new Methods().saveToTextFile(getActivity(),String.valueOf(response.code()) + "\n", "/getJobCardDetail.txt");
                         getActivity().runOnUiThread(new Runnable() {
@@ -1329,6 +1365,12 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
     @Override
     public void onLineSelected(Lines selectedLine) {
         this.mLines = selectedLine;
+
+        if (mLines != null && mUser != null){
+            Lines lines = new Lines(mLines.getSUB_UNICODE(),mLines.getSUB_UNINAME(),mUser.getUsername());
+            db.linesDao().upsert(lines);
+        }
+
         binding.textViewLine.setText(selectedLine.getSUB_UNINAME());
         alertselectLine.dismiss();
         selectShiftCustomDialog();

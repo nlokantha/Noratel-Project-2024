@@ -1,16 +1,28 @@
 package com.example.noratelproject2024.Models;
 
+import androidx.annotation.NonNull;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+
+@Entity(tableName = "lines")
 public class Lines {
-    /*
-      {
-        "SUB_UNICODE": "000091         ",
-            "SUB_UNINAME": "Assembling LK1                                    "
-    }
-     */
     String SUB_UNICODE;
     String SUB_UNINAME;
+    @PrimaryKey @NonNull
+    public String userName;
 
     public Lines() {
+    }
+
+    public Lines(String SUB_UNICODE, String SUB_UNINAME) {
+        this.SUB_UNICODE = SUB_UNICODE;
+        this.SUB_UNINAME = SUB_UNINAME;
+    }
+
+    public Lines(String SUB_UNICODE, String SUB_UNINAME, String userName) {
+        this.SUB_UNICODE = SUB_UNICODE;
+        this.SUB_UNINAME = SUB_UNINAME;
+        this.userName = userName;
     }
 
     public String getSUB_UNICODE() {
