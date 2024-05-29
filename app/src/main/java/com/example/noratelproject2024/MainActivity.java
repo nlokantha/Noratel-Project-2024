@@ -20,26 +20,29 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Log
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
-        if (sharedPref.contains("auth")){
-
-            String authStr = sharedPref.getString("auth",null);
-            if (authStr == null){
-                getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.rootView, new LoginFragment())
-                        .commit();
-            }else {
-                Gson gson = new Gson();
-                mUser = gson.fromJson(authStr, User.class);
-                getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.rootView,HomeFragment.newInstance(mUser))
-                        .commit();
-            }
-        }else {
-            getSupportFragmentManager().beginTransaction()
+//        SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+//        if (sharedPref.contains("auth")){
+//
+//            String authStr = sharedPref.getString("auth",null);
+//            if (authStr == null){
+//                getSupportFragmentManager().beginTransaction()
+//                        .replace(R.id.rootView, new LoginFragment())
+//                        .commit();
+//            }else {
+//                Gson gson = new Gson();
+//                mUser = gson.fromJson(authStr, User.class);
+//                getSupportFragmentManager().beginTransaction()
+//                        .replace(R.id.rootView,HomeFragment.newInstance(mUser))
+//                        .commit();
+//            }
+//        }else {
+//            getSupportFragmentManager().beginTransaction()
+//                    .replace(R.id.rootView, new LoginFragment())
+//                    .commit();
+//        }
+        getSupportFragmentManager().beginTransaction()
                     .replace(R.id.rootView, new LoginFragment())
                     .commit();
-        }
 
 
     }
@@ -48,11 +51,11 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Log
 
         this.mUser = user;
 
-        SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPref.edit();
-        Gson gson = new Gson();
-        editor.putString("auth",gson.toJson(user));
-        editor.apply();
+//        SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+//        SharedPreferences.Editor editor = sharedPref.edit();
+//        Gson gson = new Gson();
+//        editor.putString("auth",gson.toJson(user));
+//        editor.apply();
 
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.rootView,HomeFragment.newInstance(user))
@@ -63,10 +66,10 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Log
     @Override
     public void logout() {
         mUser = null;
-        SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPref.edit();
-        editor.remove("auth");
-        editor.apply();
+//        SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+//        SharedPreferences.Editor editor = sharedPref.edit();
+//        editor.remove("auth");
+//        editor.apply();
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.rootView,new LoginFragment())
                 .commit();

@@ -4,7 +4,6 @@ public class References {
     public static String url = "http://192.168.2.3/noratel/api/testDataCollection/";
 //    public static String url = "http://172.16.0.8/DataCollection_Mbl_API/api/DataCollection/";
 
-
     public static class Login {
         public static String methodName = url + "Login";
     }

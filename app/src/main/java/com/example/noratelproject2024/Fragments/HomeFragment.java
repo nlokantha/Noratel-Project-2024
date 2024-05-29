@@ -40,6 +40,7 @@ import com.example.noratelproject2024.Adapters.SelectLineAdapter;
 import com.example.noratelproject2024.Adapters.SelectShiftAdapter;
 import com.example.noratelproject2024.Controls.Methods;
 import com.example.noratelproject2024.Database.AppDatabase;
+import com.example.noratelproject2024.Models.Actions.Actions;
 import com.example.noratelproject2024.Models.JobCard;
 import com.example.noratelproject2024.Models.JobCardDetails;
 import com.example.noratelproject2024.Models.Lines;
@@ -51,6 +52,7 @@ import com.example.noratelproject2024.References;
 import com.example.noratelproject2024.databinding.FragmentHomeBinding;
 import com.google.gson.Gson;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -60,6 +62,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Iterator;
+import java.util.List;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -115,7 +118,7 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
     ReasonCodes mReasonCodes;
     int count = 0;
     String search;
-    String dateAndTime;
+    String dateAndTime="";
     AppDatabase db;
 
     @Override
@@ -128,8 +131,7 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         dateAndTime();
-
-        db = Room.databaseBuilder(getActivity(), AppDatabase.class,"lines.db")
+        db = Room.databaseBuilder(getActivity(), AppDatabase.class, "lines.db")
                 .fallbackToDestructiveMigration()
                 .allowMainThreadQueries()
                 .build();
@@ -141,13 +143,13 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
 
         String jobcardName = binding.buttonJobCard.getText().toString();
         String quantity = binding.editTextQuantity.getText().toString();
-        if (jobcardName.equals("-Not Selected-")){
+        if (jobcardName.equals("-Not Selected-")) {
             binding.buttonClear.setEnabled(false);
             binding.buttonSave.setEnabled(false);
             binding.buttonHold.setEnabled(false);
             binding.buttonComplete.setEnabled(false);
         }
-        if (mUser != null){
+        if (mUser != null) {
             selectLineCustomDialog();
         }
         binding.imageViewSetting.setOnClickListener(new View.OnClickListener() {
@@ -196,8 +198,8 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
                     Toast.makeText(getActivity(), "Please Select Shift", Toast.LENGTH_SHORT).show();
                 } else {
                     selectJobCardCustomDialog();
-                    reasonCodesArrayList.clear();
-                    GetReasonCodes();
+//                    reasonCodesArrayList.clear();
+
                 }
             }
         });
@@ -231,6 +233,8 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
                 NumberPlates();
             }
         });
+
+        GetReasonCodes();
     }
 
     public void dateAndTime() {
@@ -326,7 +330,7 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
 
     private void selectLineCustomDialog() {
         getLines();
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext(),R.style.CustomAlertDialog);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext(), R.style.CustomAlertDialog);
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.custom_select_line, null);
         builder.setView(view);
@@ -336,7 +340,7 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
         alertselectLine.show();
 
         WindowManager.LayoutParams layoutParams = alertselectLine.getWindow().getAttributes();
-        layoutParams.width = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,300,getResources().getDisplayMetrics());
+        layoutParams.width = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 300, getResources().getDisplayMetrics());
         layoutParams.gravity = Gravity.CENTER;
         alertselectLine.getWindow().setAttributes(layoutParams);
 
@@ -350,7 +354,7 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
 
     private void selectShiftCustomDialog() {
         getShift();
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext(),R.style.CustomAlertDialog);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext(), R.style.CustomAlertDialog);
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.custom_select_shift, null);
         builder.setView(view);
@@ -360,7 +364,7 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
         alertselectShift.show();
 
         WindowManager.LayoutParams layoutParams = alertselectShift.getWindow().getAttributes();
-        layoutParams.width = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,300,getResources().getDisplayMetrics());
+        layoutParams.width = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 300, getResources().getDisplayMetrics());
         layoutParams.gravity = Gravity.CENTER;
         alertselectShift.getWindow().setAttributes(layoutParams);
 
@@ -374,7 +378,7 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
 
     private void selectJobCardCustomDialog() {
         getJobCard();
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext(),R.style.CustomSearchJobCard);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext(), R.style.CustomSearchJobCard);
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.custom_search_jobcard, null);
         builder.setView(view);
@@ -423,7 +427,7 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
     }
 
     private void saveJobCardWarning() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext(),R.style.CustomAlertDialog);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext(), R.style.CustomAlertDialog);
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.custom_warning, null);
         builder.setView(view);
@@ -433,7 +437,7 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
         alertDialog.show();
 
         WindowManager.LayoutParams layoutParams = alertDialog.getWindow().getAttributes();
-        layoutParams.width = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,300,getResources().getDisplayMetrics());
+        layoutParams.width = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 300, getResources().getDisplayMetrics());
         layoutParams.gravity = Gravity.CENTER;
         alertDialog.getWindow().setAttributes(layoutParams);
 
@@ -463,7 +467,7 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
     }
 
     private void clearEverything() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext(),R.style.CustomAlertDialog);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext(), R.style.CustomAlertDialog);
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.custom_warning, null);
         builder.setView(view);
@@ -473,7 +477,7 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
         alertDialog.show();
 
         WindowManager.LayoutParams layoutParams = alertDialog.getWindow().getAttributes();
-        layoutParams.width = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,300,getResources().getDisplayMetrics());
+        layoutParams.width = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 300, getResources().getDisplayMetrics());
         layoutParams.gravity = Gravity.CENTER;
         alertDialog.getWindow().setAttributes(layoutParams);
 
@@ -514,7 +518,7 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
 
     private void SelectReasonCode() {
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext(),R.style.CustomAlertDialog);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext(), R.style.CustomAlertDialog);
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.custom_hold_dialog, null);
         builder.setView(view);
@@ -524,7 +528,7 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
         alertDialog.show();
 
         WindowManager.LayoutParams layoutParams = alertDialog.getWindow().getAttributes();
-        layoutParams.width = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,300,getResources().getDisplayMetrics());
+        layoutParams.width = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 300, getResources().getDisplayMetrics());
         layoutParams.gravity = Gravity.CENTER;
         alertDialog.getWindow().setAttributes(layoutParams);
 
@@ -544,10 +548,10 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
             @Override
             public void onClick(View v) {
                 try {
-                    if (mReasonCodes != null){
+                    if (mReasonCodes != null) {
                         HoldJobCard();
                         alertDialog.dismiss();
-                    }else {
+                    } else {
                         Toast.makeText(getContext(), "Please Select Reason", Toast.LENGTH_SHORT).show();
                     }
 
@@ -567,7 +571,7 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
     }
 
     private void CompleteWarning() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext(),R.style.CustomAlertDialog);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext(), R.style.CustomAlertDialog);
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.custom_warning, null);
         builder.setView(view);
@@ -577,7 +581,7 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
         alertDialog.show();
 
         WindowManager.LayoutParams layoutParams = alertDialog.getWindow().getAttributes();
-        layoutParams.width = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,300,getResources().getDisplayMetrics());
+        layoutParams.width = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 300, getResources().getDisplayMetrics());
         layoutParams.gravity = Gravity.CENTER;
         alertDialog.getWindow().setAttributes(layoutParams);
 
@@ -607,7 +611,7 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
     }
 
     private void SelectNextWarning() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext(),R.style.CustomAlertDialog);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext(), R.style.CustomAlertDialog);
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.custom_selectnext, null);
         builder.setView(view);
@@ -617,7 +621,7 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
         alertDialog.show();
 
         WindowManager.LayoutParams layoutParams = alertDialog.getWindow().getAttributes();
-        layoutParams.width = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,300,getResources().getDisplayMetrics());
+        layoutParams.width = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 300, getResources().getDisplayMetrics());
         layoutParams.gravity = Gravity.CENTER;
         alertDialog.getWindow().setAttributes(layoutParams);
 
@@ -659,7 +663,7 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
 
     private void JobHoldToOpenWarning() {
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext(),R.style.CustomAlertDialog);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext(), R.style.CustomAlertDialog);
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.custom_job_hold_warning, null);
         builder.setView(view);
@@ -669,7 +673,7 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
         alertDialog.show();
 
         WindowManager.LayoutParams layoutParams = alertDialog.getWindow().getAttributes();
-        layoutParams.width = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,300,getResources().getDisplayMetrics());
+        layoutParams.width = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 300, getResources().getDisplayMetrics());
         layoutParams.gravity = Gravity.CENTER;
         alertDialog.getWindow().setAttributes(layoutParams);
 
@@ -683,7 +687,7 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
                     HoldToOpen();
                     binding.buttonJobCard.setText(mJobCard.getJObCardNo());
                     binding.editTextJobNo.setText(mJobCard.getJob_No());
-                    if (jobCardDetails != null){
+                    if (jobCardDetails != null) {
                         binding.editTextOperations.setText(jobCardDetails.getOperations().toString());
                         binding.editTextEmployees.setText(jobCardDetails.getEmployees().toString());
                         binding.editTextLastRecorded.setText(jobCardDetails.getLastRec());
@@ -714,7 +718,7 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
     }
 
     private void NumberPlates() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext(),R.style.CustomAlertDialog);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext(), R.style.CustomAlertDialog);
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.custom_number_plate, null);
         builder.setView(view);
@@ -833,12 +837,14 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
         });
 
     }
+
     private void getLines() {
         linesArrayList.clear();
+        linesArrayListFull.clear();
         String url = References.GetLines.methodName;
-        new Methods().saveToTextFile(getActivity(),"--------------------------------" + "\n", "/getLines.txt");
-        new Methods().saveToTextFile(getActivity(),datelog + "\n", "/getLines.txt");
-        new Methods().saveToTextFile(getActivity(),url + "\n", "/getLines.txt");
+        new Methods().saveToTextFile(getActivity(), "--------------------------------" + "\n", "/getLines.txt");
+        new Methods().saveToTextFile(getActivity(), datelog + "\n", "/getLines.txt");
+        new Methods().saveToTextFile(getActivity(), url + "\n", "/getLines.txt");
         Request request = new Request.Builder()
                 .url(url)
                 .build();
@@ -846,7 +852,7 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 e.printStackTrace();
-                new Methods().saveToTextFile(getActivity(),e.getMessage() + "\n", "/getLines.txt");
+                new Methods().saveToTextFile(getActivity(), e.getMessage() + "\n", "/getLines.txt");
             }
 
             @Override
@@ -859,8 +865,8 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
                     Lines[] lines = gson.fromJson(body, Lines[].class);
 
                     linesArrayList.addAll(db.linesDao().getAllFromUser(mUser.getUsername()));
-                    Log.d(TAG, "onResponse: Database list"+db.linesDao().getAll().size());
-                    Log.d(TAG, "onResponse: Database list"+db.linesDao().getAll().toString());
+                    Log.d(TAG, "onResponse: Database list" + db.linesDao().getAll().size());
+                    Log.d(TAG, "onResponse: Database list" + db.linesDao().getAll().toString());
 
                     linesArrayListFull.addAll(Arrays.asList(lines));
                     linesArrayListFull.removeAll(linesArrayList);
@@ -876,11 +882,10 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
                         }
                     }
 
-
                     linesArrayList.addAll(linesArrayListFull);
-                    Log.d(TAG, "onResponse: arraysize of lines "+linesArrayList.size());
-                    new Methods().saveToTextFile(getActivity(),body + "\n", "/getLines.txt");
-                    new Methods().saveToTextFile(getActivity(),response.code() + "\n", "/getLines.txt");
+                    Log.d(TAG, "onResponse: arraysize of lines " + linesArrayList.size());
+                    new Methods().saveToTextFile(getActivity(), body + "\n", "/getLines.txt");
+                    new Methods().saveToTextFile(getActivity(), response.code() + "\n", "/getLines.txt");
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -889,7 +894,7 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
                         }
                     });
                 } else {
-                    new Methods().saveToTextFile(getActivity(),response.code() + "\n", "/getLines.txt");
+                    new Methods().saveToTextFile(getActivity(), response.code() + "\n", "/getLines.txt");
                 }
             }
         });
@@ -901,14 +906,14 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
         Request request = new Request.Builder()
                 .url(url)
                 .build();
-        new Methods().saveToTextFile(getActivity(),"--------------------------------" + "\n", "/getShift.txt");
-        new Methods().saveToTextFile(getActivity(),datelog + "\n", "/getShift.txt");
-        new Methods().saveToTextFile(getActivity(),url + "\n", "/getShift.txt");
+        new Methods().saveToTextFile(getActivity(), "--------------------------------" + "\n", "/getShift.txt");
+        new Methods().saveToTextFile(getActivity(), datelog + "\n", "/getShift.txt");
+        new Methods().saveToTextFile(getActivity(), url + "\n", "/getShift.txt");
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 e.printStackTrace();
-                new Methods().saveToTextFile(getActivity(),e.getMessage() + "\n", "/getShift.txt");
+                new Methods().saveToTextFile(getActivity(), e.getMessage() + "\n", "/getShift.txt");
             }
 
             @Override
@@ -920,8 +925,8 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
                     Gson gson = new Gson();
                     Shift[] shifts = gson.fromJson(body, Shift[].class);
                     shiftArrayList.addAll(Arrays.asList(shifts));
-                    new Methods().saveToTextFile(getActivity(),body + "\n", "/getShift.txt");
-                    new Methods().saveToTextFile(getActivity(),response.code() + "\n", "/getShift.txt");
+                    new Methods().saveToTextFile(getActivity(), body + "\n", "/getShift.txt");
+                    new Methods().saveToTextFile(getActivity(), response.code() + "\n", "/getShift.txt");
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -930,7 +935,7 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
                         }
                     });
                 } else {
-                    new Methods().saveToTextFile(getActivity(),response.code() + "\n", "/getShift.txt");
+                    new Methods().saveToTextFile(getActivity(), response.code() + "\n", "/getShift.txt");
                 }
             }
         });
@@ -944,9 +949,9 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
                     "?date=" + date +
                     "&line=" + mLines.getSUB_UNICODE() +
                     "&shift=" + mShift.getRoster();
-            new Methods().saveToTextFile(getActivity(),"--------------------------------" + "\n", "/getJobCard.txt");
-            new Methods().saveToTextFile(getActivity(),datelog + "\n", "/getJobCard.txt");
-            new Methods().saveToTextFile(getActivity(),url + "\n", "/getJobCard.txt");
+            new Methods().saveToTextFile(getActivity(), "--------------------------------" + "\n", "/getJobCard.txt");
+            new Methods().saveToTextFile(getActivity(), datelog + "\n", "/getJobCard.txt");
+            new Methods().saveToTextFile(getActivity(), url + "\n", "/getJobCard.txt");
 
             Request request = new Request.Builder()
                     .url(url)
@@ -955,7 +960,7 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
                 @Override
                 public void onFailure(@NonNull Call call, @NonNull IOException e) {
                     e.printStackTrace();
-                    new Methods().saveToTextFile(getActivity(),e.getMessage() + "\n", "/getJobCard.txt");
+                    new Methods().saveToTextFile(getActivity(), e.getMessage() + "\n", "/getJobCard.txt");
                 }
 
                 @Override
@@ -967,9 +972,9 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
                         Gson gson = new Gson();
                         JobCard[] jobCards = gson.fromJson(body, JobCard[].class);
                         jobCardArrayList.addAll(Arrays.asList(jobCards));
-                        Log.d(TAG, "onResponse: job card list = "+jobCardArrayList.size());
-                        new Methods().saveToTextFile(getActivity(),body + "\n", "/getJobCard.txt");
-                        new Methods().saveToTextFile(getActivity(),response.code() + "\n", "/getJobCard.txt");
+                        Log.d(TAG, "onResponse: job card list = " + jobCardArrayList.size());
+                        new Methods().saveToTextFile(getActivity(), body + "\n", "/getJobCard.txt");
+                        new Methods().saveToTextFile(getActivity(), response.code() + "\n", "/getJobCard.txt");
                         getActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -981,7 +986,7 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
                         });
 
                     } else {
-                        new Methods().saveToTextFile(getActivity(),response.code()+ "\n", "/getJobCard.txt");
+                        new Methods().saveToTextFile(getActivity(), response.code() + "\n", "/getJobCard.txt");
 
                     }
                 }
@@ -995,15 +1000,15 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
             Request request = new Request.Builder()
                     .url(url)
                     .build();
-            new Methods().saveToTextFile(getActivity(),"--------------------------------" + "\n", "/getJobCardDetail.txt");
-            new Methods().saveToTextFile(getActivity(),datelog + "\n", "/getJobCardDetail.txt");
-            new Methods().saveToTextFile(getActivity(),request.toString() + "\n", "/getJobCardDetail.txt");
+            new Methods().saveToTextFile(getActivity(), "--------------------------------" + "\n", "/getJobCardDetail.txt");
+            new Methods().saveToTextFile(getActivity(), datelog + "\n", "/getJobCardDetail.txt");
+            new Methods().saveToTextFile(getActivity(), request.toString() + "\n", "/getJobCardDetail.txt");
 
             client.newCall(request).enqueue(new Callback() {
                 @Override
                 public void onFailure(@NonNull Call call, @NonNull IOException e) {
                     e.printStackTrace();
-                    new Methods().saveToTextFile(getActivity(),e.getMessage() + "\n", "/getJobCardDetail.txt");
+                    new Methods().saveToTextFile(getActivity(), e.getMessage() + "\n", "/getJobCardDetail.txt");
                 }
 
                 @Override
@@ -1014,8 +1019,8 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
                         Gson gson = new Gson();
                         jobCardDetails = gson.fromJson(body, JobCardDetails.class);
                         Log.d(TAG, "onResponse: jobCardDetails" + jobCardDetails);
-                        new Methods().saveToTextFile(getActivity(),body + "\n", "/getJobCardDetail.txt");
-                        new Methods().saveToTextFile(getActivity(),String.valueOf(response.code()) + "\n", "/getJobCardDetail.txt");
+                        new Methods().saveToTextFile(getActivity(), body + "\n", "/getJobCardDetail.txt");
+                        new Methods().saveToTextFile(getActivity(), String.valueOf(response.code()) + "\n", "/getJobCardDetail.txt");
                         getActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -1032,14 +1037,14 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
                                     binding.buttonSave.setEnabled(true);
                                     binding.buttonHold.setEnabled(true);
                                     binding.buttonComplete.setEnabled(true);
-                                }else {
+                                } else {
                                     JobHoldToOpenWarning();
                                 }
                             }
                         });
 
-                    }else {
-                        new Methods().saveToTextFile(getActivity(),String.valueOf(response.code()) + "\n", "/getJobCardDetail.txt");
+                    } else {
+                        new Methods().saveToTextFile(getActivity(), String.valueOf(response.code()) + "\n", "/getJobCardDetail.txt");
                     }
                 }
             });
@@ -1051,15 +1056,15 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
         Request request = new Request.Builder()
                 .url(url)
                 .build();
-        new Methods().saveToTextFile(getActivity(),"--------------------------------" + "\n", "/getReasonCodes.txt");
-        new Methods().saveToTextFile(getActivity(),datelog + "\n", "/getReasonCodes.txt");
-        new Methods().saveToTextFile(getActivity(),request.toString() + "\n", "/getReasonCodes.txt");
+        new Methods().saveToTextFile(getActivity(), "--------------------------------" + "\n", "/getReasonCodes.txt");
+        new Methods().saveToTextFile(getActivity(), datelog + "\n", "/getReasonCodes.txt");
+        new Methods().saveToTextFile(getActivity(), request.toString() + "\n", "/getReasonCodes.txt");
 
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 e.printStackTrace();
-                new Methods().saveToTextFile(getActivity(),e.getMessage() + "\n", "/getReasonCodes.txt");
+                new Methods().saveToTextFile(getActivity(), e.getMessage() + "\n", "/getReasonCodes.txt");
             }
 
             @Override
@@ -1078,10 +1083,10 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
                     Gson gson = new Gson();
                     ReasonCodes[] reasonCodes = gson.fromJson(body, ReasonCodes[].class);
                     reasonCodesArrayList.addAll(Arrays.asList(reasonCodes));
-                    new Methods().saveToTextFile(getActivity(),body + "\n", "/getReasonCodes.txt");
-                    new Methods().saveToTextFile(getActivity(),response.code() + "\n", "/getReasonCodes.txt");
+                    new Methods().saveToTextFile(getActivity(), body + "\n", "/getReasonCodes.txt");
+                    new Methods().saveToTextFile(getActivity(), response.code() + "\n", "/getReasonCodes.txt");
                 } else {
-                    new Methods().saveToTextFile(getActivity(),response.code() + "\n", "/getReasonCodes.txt");
+                    new Methods().saveToTextFile(getActivity(), response.code() + "\n", "/getReasonCodes.txt");
                 }
             }
         });
@@ -1093,9 +1098,9 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
         Request request = new Request.Builder()
                 .url(url)
                 .build();
-        new Methods().saveToTextFile(getActivity(),"--------------------------------" + "\n", "/searchByEmpNo.txt");
-        new Methods().saveToTextFile(getActivity(),datelog + "\n", "/searchByEmpNo.txt");
-        new Methods().saveToTextFile(getActivity(),request.toString() + "\n", "/searchByEmpNo.txt");
+        new Methods().saveToTextFile(getActivity(), "--------------------------------" + "\n", "/searchByEmpNo.txt");
+        new Methods().saveToTextFile(getActivity(), datelog + "\n", "/searchByEmpNo.txt");
+        new Methods().saveToTextFile(getActivity(), request.toString() + "\n", "/searchByEmpNo.txt");
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
@@ -1107,7 +1112,7 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
                     }
                 });
                 e.printStackTrace();
-                new Methods().saveToTextFile(getActivity(),e.getMessage() + "\n", "/searchByEmpNo.txt");
+                new Methods().saveToTextFile(getActivity(), e.getMessage() + "\n", "/searchByEmpNo.txt");
             }
 
             @Override
@@ -1119,8 +1124,8 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
                     jobCardArrayListSearch.addAll(Arrays.asList(jobCards));
                     Log.d(TAG, "onResponse: SearchByEmpNo" + body);
                     Log.d(TAG, "onResponse: SearchByEmpNo array size " + jobCardArrayListSearch.size());
-                    new Methods().saveToTextFile(getActivity(),body + "\n", "/searchByEmpNo.txt");
-                    new Methods().saveToTextFile(getActivity(),response.code() + "\n", "/searchByEmpNo.txt");
+                    new Methods().saveToTextFile(getActivity(), body + "\n", "/searchByEmpNo.txt");
+                    new Methods().saveToTextFile(getActivity(), response.code() + "\n", "/searchByEmpNo.txt");
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -1131,7 +1136,7 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
                     });
 
                 } else {
-                    new Methods().saveToTextFile(getActivity(),response.code() + "\n", "/searchByEmpNo.txt");
+                    new Methods().saveToTextFile(getActivity(), response.code() + "\n", "/searchByEmpNo.txt");
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -1146,6 +1151,7 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
     private void SaveJobCard() throws JSONException {
         String quantity = binding.editTextQuantity.getText().toString();
         String url = References.SaveJobCard.methodName;
+        String serialNumber = binding.editTextSerialNumber.getText().toString();
 
         JSONObject jsonBody = new JSONObject();
 
@@ -1155,24 +1161,33 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
         jsonBody.put("Username", mUser.getUsername());
         jsonBody.put("JobNo", mJobCard.getJob_No());
         jsonBody.put("Line", mLines.getSUB_UNINAME());
-        jsonBody.put("Operations",jobCardDetails.getOperations());
 
+        List<String> operations = jobCardDetails.getOperations();
+        JSONArray operationsJsonArray = new JSONArray(operations);
+
+        jsonBody.put("Operations", operationsJsonArray);
+        if (serialNumber.isEmpty()) {
+            serialNumber = "";
+        }
+        jsonBody.put("SerialTrackingText", serialNumber);
+
+        jsonBody.put("RecordingTimeGiven", dateAndTime);
 
         RequestBody requestBody = RequestBody.create(jsonBody.toString(), MediaType.parse("application/json"));
         Request request = new Request.Builder()
                 .url(url)
                 .post(requestBody)
                 .build();
-        new Methods().saveToTextFile(getActivity(),"--------------------------------" + "\n", "/saveJobCard.txt");
-        new Methods().saveToTextFile(getActivity(),datelog + "\n", "/saveJobCard.txt");
-        new Methods().saveToTextFile(getActivity(),request.toString() + "\n", "/saveJobCard.txt");
-        new Methods().saveToTextFile(getActivity(),jsonBody.toString() + "\n", "/saveJobCard.txt");
+        new Methods().saveToTextFile(getActivity(), "--------------------------------" + "\n", "/saveJobCard.txt");
+        new Methods().saveToTextFile(getActivity(), datelog + "\n", "/saveJobCard.txt");
+        new Methods().saveToTextFile(getActivity(), request.toString() + "\n", "/saveJobCard.txt");
+        new Methods().saveToTextFile(getActivity(), jsonBody.toString() + "\n", "/saveJobCard.txt");
 
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 e.printStackTrace();
-                new Methods().saveToTextFile(getActivity(),e.getMessage() + "\n", "/saveJobCard.txt");
+                new Methods().saveToTextFile(getActivity(), e.getMessage() + "\n", "/saveJobCard.txt");
             }
 
             @Override
@@ -1180,17 +1195,36 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
                 if (response.isSuccessful()) {
                     String body = response.body().string();
                     Log.d(TAG, "onResponse: Save Job Card Response  " + body);
-                    new Methods().saveToTextFile(getActivity(),body + "\n", "/saveJobCard.txt");
-                    new Methods().saveToTextFile(getActivity(),response.code() + "\n", "/saveJobCard.txt");
+                    new Methods().saveToTextFile(getActivity(), body + "\n", "/saveJobCard.txt");
+                    new Methods().saveToTextFile(getActivity(), response.code() + "\n", "/saveJobCard.txt");
+                    Gson gson = new Gson();
+                    Actions actions = gson.fromJson(body, Actions.class);
+
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (actions.getStatus().equals("0")){
+                                Toast.makeText(getActivity(), "Saved Successfully", Toast.LENGTH_SHORT).show();
+//                                GetJobCardDetail();
+                            }else {
+                                Toast.makeText(getActivity(), "Save Failed", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+
 
                 } else {
-                    new Methods().saveToTextFile(getActivity(),response.code() + "\n", "/saveJobCard.txt");
+                    new Methods().saveToTextFile(getActivity(), response.code() + "\n", "/saveJobCard.txt");
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getActivity(), "Save Failed", Toast.LENGTH_SHORT).show();
+                        }
+                    });
 
                 }
             }
         });
-
-
     }
 
     private void HoldJobCard() throws JSONException {
@@ -1210,15 +1244,15 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
                 .url(url)
                 .post(requestBody)
                 .build();
-        new Methods().saveToTextFile(getActivity(),"--------------------------------" + "\n", "/HoldJobCard.txt");
-        new Methods().saveToTextFile(getActivity(),datelog + "\n", "/HoldJobCard.txt");
-        new Methods().saveToTextFile(getActivity(),request.toString() + "\n", "/HoldJobCard.txt");
-        new Methods().saveToTextFile(getActivity(),jsonBody.toString() + "\n", "/HoldJobCard.txt");
+        new Methods().saveToTextFile(getActivity(), "--------------------------------" + "\n", "/HoldJobCard.txt");
+        new Methods().saveToTextFile(getActivity(), datelog + "\n", "/HoldJobCard.txt");
+        new Methods().saveToTextFile(getActivity(), request.toString() + "\n", "/HoldJobCard.txt");
+        new Methods().saveToTextFile(getActivity(), jsonBody.toString() + "\n", "/HoldJobCard.txt");
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 e.printStackTrace();
-                new Methods().saveToTextFile(getActivity(),e.getMessage() + "\n", "/HoldJobCard.txt");
+                new Methods().saveToTextFile(getActivity(), e.getMessage() + "\n", "/HoldJobCard.txt");
 
             }
 
@@ -1228,10 +1262,23 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
                     String body = response.body().string();
                     Log.d(TAG, "onResponse: HoldJobCard " + body);
                     Log.d(TAG, "onResponse: HoldJobCard " + jsonBody.toString());
-                    new Methods().saveToTextFile(getActivity(),body + "\n", "/HoldJobCard.txt");
-                    new Methods().saveToTextFile(getActivity(),response.code() + "\n", "/HoldJobCard.txt");
+                    new Methods().saveToTextFile(getActivity(), body + "\n", "/HoldJobCard.txt");
+                    new Methods().saveToTextFile(getActivity(), response.code() + "\n", "/HoldJobCard.txt");
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getActivity(), "Hold Successfully", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+
                 } else {
-                    new Methods().saveToTextFile(getActivity(),response.code() + "\n", "/HoldJobCard.txt");
+                    new Methods().saveToTextFile(getActivity(), response.code() + "\n", "/HoldJobCard.txt");
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getActivity(), "Error !!!", Toast.LENGTH_SHORT).show();
+                        }
+                    });
 
                 }
             }
@@ -1250,15 +1297,15 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
                 .url(url)
                 .post(requestBody)
                 .build();
-        new Methods().saveToTextFile(getActivity(),"--------------------------------" + "\n", "/CompleteJobCard.txt");
-        new Methods().saveToTextFile(getActivity(),datelog + "\n", "/CompleteJobCard.txt");
-        new Methods().saveToTextFile(getActivity(),request.toString() + "\n", "/CompleteJobCard.txt");
-        new Methods().saveToTextFile(getActivity(),jsonBody.toString() + "\n", "/CompleteJobCard.txt");
+        new Methods().saveToTextFile(getActivity(), "--------------------------------" + "\n", "/CompleteJobCard.txt");
+        new Methods().saveToTextFile(getActivity(), datelog + "\n", "/CompleteJobCard.txt");
+        new Methods().saveToTextFile(getActivity(), request.toString() + "\n", "/CompleteJobCard.txt");
+        new Methods().saveToTextFile(getActivity(), jsonBody.toString() + "\n", "/CompleteJobCard.txt");
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 e.printStackTrace();
-                new Methods().saveToTextFile(getActivity(),e.getMessage() + "\n", "/CompleteJobCard.txt");
+                new Methods().saveToTextFile(getActivity(), e.getMessage() + "\n", "/CompleteJobCard.txt");
             }
 
             @Override
@@ -1266,11 +1313,23 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
                 if (response.isSuccessful()) {
                     String body = response.body().string();
                     Log.d(TAG, "onResponse: CompleteJobCard " + body);
-                    new Methods().saveToTextFile(getActivity(),body + "\n", "/CompleteJobCard.txt");
-                    new Methods().saveToTextFile(getActivity(),response.code() + "\n", "/CompleteJobCard.txt");
+                    new Methods().saveToTextFile(getActivity(), body + "\n", "/CompleteJobCard.txt");
+                    new Methods().saveToTextFile(getActivity(), response.code() + "\n", "/CompleteJobCard.txt");
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getActivity(), "Complete Successfully", Toast.LENGTH_SHORT).show();
+                        }
+                    });
                 } else {
                     Log.d(TAG, "onResponse: CompleteJobCard ERROR!!!!!");
-                    new Methods().saveToTextFile(getActivity(),response.code() + "\n", "/CompleteJobCard.txt");
+                    new Methods().saveToTextFile(getActivity(), response.code() + "\n", "/CompleteJobCard.txt");
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getActivity(), "Error !!!", Toast.LENGTH_SHORT).show();
+                        }
+                    });
                 }
             }
         });
@@ -1288,31 +1347,34 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
                 .url(References.HoldToOpen.methodName)
                 .post(requestBody)
                 .build();
-        new Methods().saveToTextFile(getActivity(),"--------------------------------" + "\n", "/HoldToOpen.txt");
-        new Methods().saveToTextFile(getActivity(),datelog + "\n", "/HoldToOpen.txt");
-        new Methods().saveToTextFile(getActivity(),request.toString() + "\n", "/HoldToOpen.txt");
-        new Methods().saveToTextFile(getActivity(),jsonBody.toString() + "\n", "/HoldToOpen.txt");
+        new Methods().saveToTextFile(getActivity(), "--------------------------------" + "\n", "/HoldToOpen.txt");
+        new Methods().saveToTextFile(getActivity(), datelog + "\n", "/HoldToOpen.txt");
+        new Methods().saveToTextFile(getActivity(), request.toString() + "\n", "/HoldToOpen.txt");
+        new Methods().saveToTextFile(getActivity(), jsonBody.toString() + "\n", "/HoldToOpen.txt");
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 e.printStackTrace();
-                new Methods().saveToTextFile(getActivity(),e.getMessage() + "\n", "/HoldToOpen.txt");
+                new Methods().saveToTextFile(getActivity(), e.getMessage() + "\n", "/HoldToOpen.txt");
             }
+
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (response.isSuccessful()) {
                     String body = response.body().string();
                     Log.d(TAG, "onResponse: HoldToOpen " + body);
-                    new Methods().saveToTextFile(getActivity(),body + "\n", "/HoldToOpen.txt");
-                    new Methods().saveToTextFile(getActivity(),response.code() + "\n", "/HoldToOpen.txt");
+                    new Methods().saveToTextFile(getActivity(), body + "\n", "/HoldToOpen.txt");
+                    new Methods().saveToTextFile(getActivity(), response.code() + "\n", "/HoldToOpen.txt");
+
                 } else {
                     Log.d(TAG, "onResponse: HoldToOpen Error!!!!!!");
-                    new Methods().saveToTextFile(getActivity(),response.code() + "\n", "/HoldToOpen.txt");
+                    new Methods().saveToTextFile(getActivity(), response.code() + "\n", "/HoldToOpen.txt");
 
                 }
             }
         });
     }
+
     private void showDatePicker() {
         Calendar calendar = Calendar.getInstance();
         int YEAR = calendar.get(Calendar.YEAR);
@@ -1322,27 +1384,27 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
         DatePickerDialog datePickerDialog = new DatePickerDialog(getActivity(), new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                dateAndTime = year + "-" + (month + 1) + "-" + dayOfMonth;
+                // Format the date as "YYYY-MM-DD"
+                dateAndTime = String.format("%04d-%02d-%02d", year, month + 1, dayOfMonth);
                 showTimePicker();
             }
         }, YEAR, MONTH, DATE);
         datePickerDialog.show();
     }
+
     private void showTimePicker() {
         final Calendar calendar = Calendar.getInstance();
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
         int minute = calendar.get(Calendar.MINUTE);
+
         TimePickerDialog timePickerDialog = new TimePickerDialog(getActivity(), new TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                boolean isPM = (hourOfDay >= 12);
-                int hourIn12Format = hourOfDay % 12;
-                if (hourIn12Format == 0) hourIn12Format = 12;
-                String amPm = isPM ? "PM" : "AM";
-                dateAndTime += " " + String.format("%02d:%02d %s", hourIn12Format, minute, amPm);
+                // Format the time as "HH:mm"
+                dateAndTime += String.format(" %02d:%02d", hourOfDay, minute);
                 binding.buttonDatePicker.setText(dateAndTime);
             }
-        }, hour, minute, false);
+        }, hour, minute, false); // 'true' for 24-hour format
         timePickerDialog.show();
     }
 
@@ -1366,8 +1428,8 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
     public void onLineSelected(Lines selectedLine) {
         this.mLines = selectedLine;
 
-        if (mLines != null && mUser != null){
-            Lines lines = new Lines(mLines.getSUB_UNICODE(),mLines.getSUB_UNINAME(),mUser.getUsername());
+        if (mLines != null && mUser != null) {
+            Lines lines = new Lines(mLines.getSUB_UNICODE(), mLines.getSUB_UNINAME(), mUser.getUsername());
             db.linesDao().upsert(lines);
         }
 

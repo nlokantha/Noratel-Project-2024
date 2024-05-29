@@ -53,8 +53,8 @@ public class LoginFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        binding.editTextUserName.setText("test");
-        binding.editTextPassword.setText("test123");
+//        binding.editTextUserName.setText("test");
+//        binding.editTextPassword.setText("test123");
         binding.editTextUserName.requestFocus();
 
         binding.buttonLogin.setOnClickListener(new View.OnClickListener() {
