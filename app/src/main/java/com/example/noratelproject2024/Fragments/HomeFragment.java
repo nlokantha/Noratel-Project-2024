@@ -3,6 +3,7 @@ package com.example.noratelproject2024.Fragments;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -118,8 +119,13 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
     ReasonCodes mReasonCodes;
     int count = 0;
     String search;
-    String dateAndTime="";
+    String dateAndTime = "";
     AppDatabase db;
+
+//    Failed Massage
+    String failedToSave;
+    String failedToHold;
+    String failedToComplete;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -136,13 +142,8 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
                 .allowMainThreadQueries()
                 .build();
 
-        /*
-        AppDatabase db = Room.databaseBuilder(getApplicationContext(),
-        AppDatabase.class, "database-name").build();
-         */
-
         String jobcardName = binding.buttonJobCard.getText().toString();
-        String quantity = binding.editTextQuantity.getText().toString();
+
         if (jobcardName.equals("-Not Selected-")) {
             binding.buttonClear.setEnabled(false);
             binding.buttonSave.setEnabled(false);
@@ -150,7 +151,21 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
             binding.buttonComplete.setEnabled(false);
         }
         if (mUser != null) {
-            selectLineCustomDialog();
+            SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
+            if (sharedPref.contains("mLines")) {
+                String mLinesStr = sharedPref.getString("mLines", null);
+                if (mLinesStr == null) {
+                    selectLineCustomDialog();
+                } else {
+                    Gson gson = new Gson();
+                    mLines = gson.fromJson(mLinesStr, Lines.class);
+                    binding.textViewLine.setText(mLines.getSUB_UNINAME());
+                    selectShiftCustomDialog();
+                }
+
+            } else {
+                selectLineCustomDialog();
+            }
         }
         binding.imageViewSetting.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -198,8 +213,6 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
                     Toast.makeText(getActivity(), "Please Select Shift", Toast.LENGTH_SHORT).show();
                 } else {
                     selectJobCardCustomDialog();
-//                    reasonCodesArrayList.clear();
-
                 }
             }
         });
@@ -515,6 +528,107 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
         });
 
     }
+    private void SaveSuccessfulWarning() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext(), R.style.CustomAlertDialog);
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+        View view = inflater.inflate(R.layout.custom_save_successful_warning, null);
+        builder.setView(view);
+
+        AlertDialog alertDialog = builder.create();
+        alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        alertDialog.show();
+
+        WindowManager.LayoutParams layoutParams = alertDialog.getWindow().getAttributes();
+        layoutParams.width = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 300, getResources().getDisplayMetrics());
+        layoutParams.gravity = Gravity.CENTER;
+        alertDialog.getWindow().setAttributes(layoutParams);
+
+        Button buttonClose = view.findViewById(R.id.buttonClose);
+        buttonClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alertDialog.dismiss();
+            }
+        });
+
+    }
+    private void SaveFailedWarning() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext(), R.style.CustomAlertDialog);
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+        View view = inflater.inflate(R.layout.custom_save_failed_warning, null);
+        builder.setView(view);
+
+        AlertDialog alertDialog = builder.create();
+        alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        alertDialog.show();
+
+        WindowManager.LayoutParams layoutParams = alertDialog.getWindow().getAttributes();
+        layoutParams.width = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 300, getResources().getDisplayMetrics());
+        layoutParams.gravity = Gravity.CENTER;
+        alertDialog.getWindow().setAttributes(layoutParams);
+
+        Button buttonClose = view.findViewById(R.id.buttonClose);
+        TextView textViewMessage =view.findViewById(R.id.textViewMessage);
+
+        if (!failedToSave.isEmpty()){
+            textViewMessage.setText(failedToSave);
+        }
+        buttonClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alertDialog.dismiss();
+            }
+        });
+
+    }
+    private void HoldSuccessfulWarning() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext(), R.style.CustomAlertDialog);
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+        View view = inflater.inflate(R.layout.custom_hold_successful_warning, null);
+        builder.setView(view);
+
+        AlertDialog alertDialog = builder.create();
+        alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        alertDialog.show();
+
+        WindowManager.LayoutParams layoutParams = alertDialog.getWindow().getAttributes();
+        layoutParams.width = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 300, getResources().getDisplayMetrics());
+        layoutParams.gravity = Gravity.CENTER;
+        alertDialog.getWindow().setAttributes(layoutParams);
+
+        Button buttonClose = view.findViewById(R.id.buttonClose);
+        buttonClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alertDialog.dismiss();
+            }
+        });
+
+    }
+    private void HoldFailedWarning() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext(), R.style.CustomAlertDialog);
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+        View view = inflater.inflate(R.layout.custom_hold_failed_warning, null);
+        builder.setView(view);
+
+        AlertDialog alertDialog = builder.create();
+        alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        alertDialog.show();
+
+        WindowManager.LayoutParams layoutParams = alertDialog.getWindow().getAttributes();
+        layoutParams.width = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 300, getResources().getDisplayMetrics());
+        layoutParams.gravity = Gravity.CENTER;
+        alertDialog.getWindow().setAttributes(layoutParams);
+
+        Button buttonClose = view.findViewById(R.id.buttonClose);
+        buttonClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alertDialog.dismiss();
+            }
+        });
+
+    }
 
     private void SelectReasonCode() {
 
@@ -593,7 +707,6 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
             public void onClick(View v) {
                 try {
                     CompleteJobCard();
-                    SelectNextWarning();
                 } catch (JSONException e) {
                     throw new RuntimeException(e);
                 }
@@ -601,6 +714,30 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
             }
         });
 
+        buttonClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alertDialog.dismiss();
+            }
+        });
+
+    }
+    private void FailedToCompleteWarning() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext(), R.style.CustomAlertDialog);
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+        View view = inflater.inflate(R.layout.custom_complete_failed_warning, null);
+        builder.setView(view);
+
+        AlertDialog alertDialog = builder.create();
+        alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        alertDialog.show();
+
+        WindowManager.LayoutParams layoutParams = alertDialog.getWindow().getAttributes();
+        layoutParams.width = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 300, getResources().getDisplayMetrics());
+        layoutParams.gravity = Gravity.CENTER;
+        alertDialog.getWindow().setAttributes(layoutParams);
+
+        Button buttonClose = view.findViewById(R.id.buttonClose);
         buttonClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -647,6 +784,7 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
                 binding.buttonHold.setEnabled(false);
                 binding.buttonComplete.setEnabled(false);
 
+                selectJobCardCustomDialog();
 
                 alertDialog.dismiss();
             }
@@ -1051,6 +1189,51 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
         }
     }
 
+    private void GetJobCardDetailAfterSave() {
+        if (mJobCard != null) {
+            String url = References.GetJobCardDetail.methodName + mJobCard.getJC_Serial_No();
+            Request request = new Request.Builder()
+                    .url(url)
+                    .build();
+            new Methods().saveToTextFile(getActivity(), "--------------------------------" + "\n", "/GetJobCardDetailAfterSave.txt");
+            new Methods().saveToTextFile(getActivity(), datelog + "\n", "/GetJobCardDetailAfterSave.txt");
+            new Methods().saveToTextFile(getActivity(), request.toString() + "\n", "/GetJobCardDetailAfterSave.txt");
+            client.newCall(request).enqueue(new Callback() {
+                @Override
+                public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                    e.printStackTrace();
+                }
+
+                @Override
+                public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                    if (response.isSuccessful()) {
+                        String body = response.body().string();
+                        Log.d(TAG, "onResponse: GetJobCardDetailAfterSave " + body);
+                        Gson gson = new Gson();
+                        jobCardDetails = gson.fromJson(body, JobCardDetails.class);
+                        Log.d(TAG, "onResponse: jobCardDetails" + jobCardDetails);
+                        new Methods().saveToTextFile(getActivity(), body + "\n", "/GetJobCardDetailAfterSave.txt");
+                        new Methods().saveToTextFile(getActivity(), String.valueOf(response.code()) + "\n", "/GetJobCardDetailAfterSave.txt");
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                binding.editTextLastRecorded.setText(jobCardDetails.getLastRec());
+                                binding.editTextTarg.setText(jobCardDetails.getTarget());
+                                binding.editTextComp.setText(jobCardDetails.getCompleted());
+                                binding.editTextQuantity.setText("0");
+                                binding.editTextSerialNumber.setText("");
+                            }
+                        });
+                    } else {
+                        new Methods().saveToTextFile(getActivity(), String.valueOf(response.code()) + "\n", "/GetJobCardDetailAfterSave.txt");
+                    }
+                }
+            });
+        }
+
+
+    }
+
     private void GetReasonCodes() {
         String url = References.GetReasonCodes.methodName;
         Request request = new Request.Builder()
@@ -1203,11 +1386,13 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            if (actions.getStatus().equals("0")){
-                                Toast.makeText(getActivity(), "Saved Successfully", Toast.LENGTH_SHORT).show();
-//                                GetJobCardDetail();
-                            }else {
-                                Toast.makeText(getActivity(), "Save Failed", Toast.LENGTH_SHORT).show();
+                            if (actions.getStatus().equals("0")) {
+                                SaveSuccessfulWarning();
+                                GetJobCardDetailAfterSave();
+                            } else {
+                                failedToSave = actions.getMessage().toString();
+//                                Toast.makeText(getActivity(), "Failed to Save", Toast.LENGTH_SHORT).show();
+                                SaveFailedWarning();
                             }
                         }
                     });
@@ -1218,7 +1403,7 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            Toast.makeText(getActivity(), "Save Failed", Toast.LENGTH_SHORT).show();
+                            SaveFailedWarning();
                         }
                     });
 
@@ -1238,6 +1423,7 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
         jsonBody.put("Status", mJobCard.getStatus());
         jsonBody.put("Username", mUser.getUsername());
         jsonBody.put("ReasonCode", mReasonCodes.getSr_No());
+        jsonBody.put("RecordingTimeGiven", dateAndTime);
 
         RequestBody requestBody = RequestBody.create(jsonBody.toString(), MediaType.parse("application/json"));
         Request request = new Request.Builder()
@@ -1264,10 +1450,54 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
                     Log.d(TAG, "onResponse: HoldJobCard " + jsonBody.toString());
                     new Methods().saveToTextFile(getActivity(), body + "\n", "/HoldJobCard.txt");
                     new Methods().saveToTextFile(getActivity(), response.code() + "\n", "/HoldJobCard.txt");
+                    Gson gson = new Gson();
+                    Actions actions = gson.fromJson(body, Actions.class);
+
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            Toast.makeText(getActivity(), "Hold Successfully", Toast.LENGTH_SHORT).show();
+                            if (actions.getStatus().equals("0")){
+//                                Toast.makeText(getActivity(), "Hold Successfully", Toast.LENGTH_SHORT).show();
+                                HoldSuccessfulWarning();
+
+                                binding.buttonJobCard.setText("-Not Selected-");
+                                binding.buttonDatePicker.setText("");
+                                binding.editTextJobNo.setText("");
+                                binding.editTextOperations.setText("");
+                                binding.editTextEmployees.setText("");
+                                binding.editTextLastRecorded.setText("");
+                                binding.editTextTarg.setText("");
+                                binding.editTextComp.setText("");
+                                binding.editTextQuantity.setText("0");
+                                binding.editTextSerialNumber.setText("");
+
+                                binding.buttonClear.setEnabled(false);
+                                binding.buttonSave.setEnabled(false);
+                                binding.buttonHold.setEnabled(false);
+                                binding.buttonComplete.setEnabled(false);
+
+                            }else  {
+//                                Toast.makeText(getActivity(), "Failed to Hold", Toast.LENGTH_SHORT).show();
+                                failedToHold = actions.getMessage().toString();
+                                HoldFailedWarning();
+
+                                binding.buttonJobCard.setText("-Not Selected-");
+                                binding.buttonDatePicker.setText("");
+                                binding.editTextJobNo.setText("");
+                                binding.editTextOperations.setText("");
+                                binding.editTextEmployees.setText("");
+                                binding.editTextLastRecorded.setText("");
+                                binding.editTextTarg.setText("");
+                                binding.editTextComp.setText("");
+                                binding.editTextQuantity.setText("0");
+                                binding.editTextSerialNumber.setText("");
+
+                                binding.buttonClear.setEnabled(false);
+                                binding.buttonSave.setEnabled(false);
+                                binding.buttonHold.setEnabled(false);
+                                binding.buttonComplete.setEnabled(false);
+                            }
+
                         }
                     });
 
@@ -1276,7 +1506,7 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            Toast.makeText(getActivity(), "Error !!!", Toast.LENGTH_SHORT).show();
+                            HoldFailedWarning();
                         }
                     });
 
@@ -1291,6 +1521,7 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
         jsonBody.put("JobSrNo", mJobCard.getJC_Serial_No());
         jsonBody.put("Status", mJobCard.getStatus());
         jsonBody.put("Username", mUser.getUsername());
+        jsonBody.put("RecordingTimeGiven", dateAndTime);
 
         RequestBody requestBody = RequestBody.create(jsonBody.toString(), MediaType.parse("application/json"));
         Request request = new Request.Builder()
@@ -1315,10 +1546,18 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
                     Log.d(TAG, "onResponse: CompleteJobCard " + body);
                     new Methods().saveToTextFile(getActivity(), body + "\n", "/CompleteJobCard.txt");
                     new Methods().saveToTextFile(getActivity(), response.code() + "\n", "/CompleteJobCard.txt");
+                    Gson gson = new Gson();
+                    Actions actions = gson.fromJson(body, Actions.class);
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            Toast.makeText(getActivity(), "Complete Successfully", Toast.LENGTH_SHORT).show();
+                            if (actions.getStatus().equals("0")){
+                                SelectNextWarning();
+//                                Toast.makeText(getActivity(), "Completed Successfully", Toast.LENGTH_SHORT).show();
+                            }else {
+                                failedToComplete = actions.getMessage().toString();
+                                FailedToCompleteWarning();
+                            }
                         }
                     });
                 } else {
@@ -1327,7 +1566,7 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            Toast.makeText(getActivity(), "Error !!!", Toast.LENGTH_SHORT).show();
+                            FailedToCompleteWarning();
                         }
                     });
                 }
@@ -1428,6 +1667,13 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
     public void onLineSelected(Lines selectedLine) {
         this.mLines = selectedLine;
 
+        SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        Gson gson = new Gson();
+        editor.putString("mLines", gson.toJson(mLines));
+        editor.apply();
+
+
         if (mLines != null && mUser != null) {
             Lines lines = new Lines(mLines.getSUB_UNICODE(), mLines.getSUB_UNINAME(), mUser.getUsername());
             db.linesDao().upsert(lines);
@@ -1442,9 +1688,6 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
     public void onJobCardSelected(JobCard jobCard) {
         this.mJobCard = jobCard;
         GetJobCardDetail();
-//        if (jobCard.getStatus().equals("Hold")) {
-//            JobHoldToOpenWarning();
-//        }
         alertselectJobCard.dismiss();
 
     }

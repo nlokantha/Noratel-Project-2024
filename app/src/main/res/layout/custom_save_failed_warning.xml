@@ -2,7 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="300dp"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:layout_gravity="center_horizontal">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -12,11 +13,10 @@
 
         <ImageView
             android:id="@+id/imageView2"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
+            android:layout_width="75dp"
+            android:layout_height="75dp"
             android:layout_gravity="center"
-            android:backgroundTint="@color/light_green"
-            android:src="@drawable/check_green" />
+            android:src="@drawable/error_red" />
 
         <TextView
             android:id="@+id/textView2"
@@ -24,10 +24,20 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:gravity="center"
-            android:textColor="@color/light_green"
-            android:text="Complete Success!"
+            android:text="Sorry!"
             android:textAlignment="center"
-            android:textSize="30sp"
+            android:textSize="36sp"
+            android:textColor="@color/light_red"
+            android:textStyle="bold" />
+        <TextView
+            android:id="@+id/textViewMessage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:textAlignment="center"
+            android:textSize="18sp"
+            android:textColor="@color/light_red"
             android:textStyle="bold" />
 
         <LinearLayout
@@ -48,17 +58,7 @@
                 android:textColor="@color/white"
                 app:cornerRadius="10dp" />
 
-            <Button
-                android:id="@+id/buttonSelectNext"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="5dp"
-                android:layout_weight="1"
-                android:backgroundTint="@color/light_green"
-                android:text="Select Next"
-                android:textAllCaps="false"
-                android:textColor="@color/white"
-                app:cornerRadius="10dp" />
+
         </LinearLayout>
 
     </LinearLayout>
