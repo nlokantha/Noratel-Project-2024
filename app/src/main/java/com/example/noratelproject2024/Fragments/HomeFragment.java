@@ -62,8 +62,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -543,6 +545,7 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
         });
 
     }
+
     private void SaveSuccessfulWarning() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext(), R.style.CustomAlertDialog);
         LayoutInflater inflater = getActivity().getLayoutInflater();
@@ -567,6 +570,7 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
         });
 
     }
+
     private void SaveFailedWarning() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext(), R.style.CustomAlertDialog);
         LayoutInflater inflater = getActivity().getLayoutInflater();
@@ -596,6 +600,7 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
         });
 
     }
+
     private void HoldSuccessfulWarning() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext(), R.style.CustomAlertDialog);
         LayoutInflater inflater = getActivity().getLayoutInflater();
@@ -620,6 +625,7 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
         });
 
     }
+
     private void HoldFailedWarning() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext(), R.style.CustomAlertDialog);
         LayoutInflater inflater = getActivity().getLayoutInflater();
@@ -737,6 +743,7 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
         });
 
     }
+
     private void FailedToCompleteWarning() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext(), R.style.CustomAlertDialog);
         LayoutInflater inflater = getActivity().getLayoutInflater();
@@ -1017,7 +1024,20 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
                     Gson gson = new Gson();
                     Lines[] lines = gson.fromJson(body, Lines[].class);
 
-                    linesArrayList.addAll(db.linesDao().getAllFromUser(mUser.getUsername()));
+//                    linesArrayList.addAll(db.linesDao().getAllFromUser(mUser.getUsername()));
+
+                    List<Lines> linesFromDb = db.linesDao().getAllFromUser(mUser.getUsername());
+                    Set<String> namesSet = new HashSet<>();
+                    List<Lines> uniqueLinesList = new ArrayList<>();
+
+                    for (Lines line : linesFromDb) {
+                        if (namesSet.add(line.getSUB_UNINAME())) {
+                            uniqueLinesList.add(line);
+                        }
+                    }
+                    linesArrayList.addAll(uniqueLinesList);
+
+
                     Log.d(TAG, "onResponse: Database list" + db.linesDao().getAll().size());
                     Log.d(TAG, "onResponse: Database list" + db.linesDao().getAll().toString());
 
@@ -1524,6 +1544,22 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
                         @Override
                         public void run() {
                             HoldFailedWarning();
+
+                            binding.buttonJobCard.setText("-Not Selected-");
+                            binding.buttonDatePicker.setText("");
+                            binding.editTextJobNo.setText("");
+                            binding.editTextOperations.setText("");
+                            binding.editTextEmployees.setText("");
+                            binding.editTextLastRecorded.setText("");
+                            binding.editTextTarg.setText("");
+                            binding.editTextComp.setText("");
+                            binding.editTextQuantity.setText("0");
+                            binding.editTextSerialNumber.setText("");
+
+                            binding.buttonClear.setEnabled(false);
+                            binding.buttonSave.setEnabled(false);
+                            binding.buttonHold.setEnabled(false);
+                            binding.buttonComplete.setEnabled(false);
                         }
                     });
 

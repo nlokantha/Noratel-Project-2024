@@ -21,6 +21,6 @@ public interface LinesDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void upsert(Lines lines);
 
-    @Query("SELECT * FROM lines WHERE userName = :userName")
+    @Query("SELECT * FROM lines WHERE userName = :userName ORDER BY SUB_UNINAME DESC")
     List<Lines> getAllFromUser(String userName);
 }

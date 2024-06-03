@@ -8,8 +8,10 @@ import androidx.room.PrimaryKey;
 public class Lines {
     String SUB_UNICODE;
     String SUB_UNINAME;
-    @PrimaryKey @NonNull
     public String userName;
+
+    @PrimaryKey(autoGenerate = true)
+    public int id;
 
     public Lines() {
     }
