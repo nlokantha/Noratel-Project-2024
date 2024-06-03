@@ -160,12 +160,27 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
                     Gson gson = new Gson();
                     mLines = gson.fromJson(mLinesStr, Lines.class);
                     binding.textViewLine.setText(mLines.getSUB_UNINAME());
-                    selectShiftCustomDialog();
+//                    selectShiftCustomDialog();
+
+                    if (sharedPref.contains("mShift")) {
+                        String mShiftStr = sharedPref.getString("mShift", null);
+                        if (mShiftStr == null) {
+                            selectShiftCustomDialog();
+                        } else {
+                            mShift = gson.fromJson(mShiftStr, Shift.class);
+                            binding.textViewShift.setText(mShift.getRoster());
+                            selectJobCardCustomDialog();
+                        }
+
+                    } else {
+                        selectShiftCustomDialog();
+                    }
                 }
 
             } else {
                 selectLineCustomDialog();
             }
+
         }
         binding.imageViewSetting.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -1388,6 +1403,7 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
                         public void run() {
                             if (actions.getStatus().equals("0")) {
                                 SaveSuccessfulWarning();
+                                binding.buttonDatePicker.setText("");
                                 GetJobCardDetailAfterSave();
                             } else {
                                 failedToSave = actions.getMessage().toString();
@@ -1471,6 +1487,7 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
                                 binding.editTextQuantity.setText("0");
                                 binding.editTextSerialNumber.setText("");
 
+
                                 binding.buttonClear.setEnabled(false);
                                 binding.buttonSave.setEnabled(false);
                                 binding.buttonHold.setEnabled(false);
@@ -1553,7 +1570,7 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
                         public void run() {
                             if (actions.getStatus().equals("0")){
                                 SelectNextWarning();
-//                                Toast.makeText(getActivity(), "Completed Successfully", Toast.LENGTH_SHORT).show();
+                                binding.buttonDatePicker.setText("");
                             }else {
                                 failedToComplete = actions.getMessage().toString();
                                 FailedToCompleteWarning();
@@ -1658,6 +1675,14 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
     @Override
     public void onShiftSelected(Shift selectedShift) {
         this.mShift = selectedShift;
+
+        SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        Gson gson = new Gson();
+        editor.putString("mShift", gson.toJson(mShift));
+        editor.apply();
+
+
         binding.textViewShift.setText(selectedShift.getRoster());
         alertselectShift.dismiss();
         selectJobCardCustomDialog();
