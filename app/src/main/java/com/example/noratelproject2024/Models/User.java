@@ -1,21 +1,17 @@
 package com.example.noratelproject2024.Models;
 
 import java.io.Serializable;
+import java.util.List;
 
 public class User implements Serializable {
     String Status;
     String Username;
-    String Detail;
+    List<Detail> Detail;
+    String Message;
 
     public User(String status, String username) {
         Status = status;
         Username = username;
-    }
-
-    public User(String status, String username, String detail) {
-        Status = status;
-        Username = username;
-        Detail = detail;
     }
 
     public String getStatus() {
@@ -34,11 +30,19 @@ public class User implements Serializable {
         Username = username;
     }
 
-    public String getDetail() {
+    public List<com.example.noratelproject2024.Models.Detail> getDetail() {
         return Detail;
     }
 
-    public void setDetail(String detail) {
+    public void setDetail(List<com.example.noratelproject2024.Models.Detail> detail) {
         Detail = detail;
+    }
+
+    public String getMessage() {
+        return Message;
+    }
+
+    public void setMessage(String message) {
+        Message = message;
     }
 }

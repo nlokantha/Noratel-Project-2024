@@ -3,7 +3,6 @@ package com.example.noratelproject2024.Models;
 public class ReasonCodes {
     String Sr_No;
     String Category;
-
     public ReasonCodes() {
     }
 
