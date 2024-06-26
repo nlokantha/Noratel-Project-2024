@@ -85,7 +85,6 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
     public HomeFragment() {
         // Required empty public constructor
     }
-
     public static HomeFragment newInstance(User mUser) {
         HomeFragment fragment = new HomeFragment();
         Bundle args = new Bundle();
@@ -93,7 +92,6 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
         fragment.setArguments(args);
         return fragment;
     }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -101,7 +99,6 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
             mUser = (User) getArguments().getSerializable(ARG_PARAM_USER);
         }
     }
-
     FragmentHomeBinding binding;
     private final OkHttpClient client = new OkHttpClient();
     private static final String TAG = "demo";
@@ -152,9 +149,9 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
                 .allowMainThreadQueries()
                 .build();
 
-        String jobcardName = binding.buttonJobCard.getText().toString();
+        String jobCardName = binding.buttonJobCard.getText().toString();
 
-        if (jobcardName.equals("-Not Selected-")) {
+        if (jobCardName.equals("-Not Selected-")) {
             binding.buttonClear.setEnabled(false);
             binding.buttonSave.setEnabled(false);
             binding.buttonHold.setEnabled(false);
@@ -171,7 +168,6 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
                     mLines = gson.fromJson(mLinesStr, Lines.class);
                     binding.textViewLine.setText(mLines.getSUB_UNINAME());
 //                    selectShiftCustomDialog();
-
                     if (sharedPref.contains("mShift")) {
                         String mShiftStr = sharedPref.getString("mShift", null);
                         if (mShiftStr == null) {
@@ -181,12 +177,10 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
                             binding.textViewShift.setText(mShift.getRoster());
                             selectJobCardCustomDialog();
                         }
-
                     } else {
                         selectShiftCustomDialog();
                     }
                 }
-
             } else {
                 selectLineCustomDialog();
             }
@@ -196,6 +190,7 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
             getLinesForUser();
             for (Detail detail : mUser.getDetail()){
                 mDetail = detail;
+                Log.d(TAG, "onViewCreated: "+mDetail);
             }
         }
         binding.imageViewSetting.setOnClickListener(new View.OnClickListener() {
@@ -868,7 +863,6 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
                         binding.editTextTarg.setText(jobCardDetails.getTarget());
                         binding.editTextComp.setText(jobCardDetails.getCompleted());
                     }
-
                     binding.buttonClear.setEnabled(true);
                     binding.buttonSave.setEnabled(true);
                     binding.buttonHold.setEnabled(true);
@@ -1095,10 +1089,17 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
         Request request = new Request.Builder()
                 .url(url)
                 .build();
+
+        new Methods().saveToTextFile(getActivity(),"--------------------------------");
+        new Methods().saveToTextFile(getActivity(),datelog);
+        new Methods().saveToTextFile(getActivity(),"Get Line For User");
+        new Methods().saveToTextFile(getActivity(),request.toString());
+
+
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
-
+                new Methods().saveToTextFile(getActivity(),e.getMessage());
             }
 
             @Override
@@ -1108,20 +1109,18 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
                     Gson gson = new Gson();
                     Lines[] lines = gson.fromJson(body, Lines[].class);
                     linesArrayList.addAll(Arrays.asList(lines));
-                    Log.d(TAG, "onResponse: linesArrayListForUser"+linesArrayList.size());
                         String SUB_UNICODE = mDetail.getLine();
                         for (Lines lines1 : linesArrayList){
                             if (lines1.getSUB_UNICODE().equals(SUB_UNICODE)){
                                 mLines = lines1;
                                 binding.textViewLine.setText(mLines.getSUB_UNINAME());
                                 getShiftForUser();
-
                             }
                         }
-
-
+//                    new Methods().saveToTextFile(getActivity(),body);
+                    new Methods().saveToTextFile(getActivity(), String.valueOf(response.code()));
                 }else {
-
+                    new Methods().saveToTextFile(getActivity(), String.valueOf(response.code()));
                 }
             }
         });
@@ -1174,10 +1173,16 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
         Request request = new Request.Builder()
                 .url(url)
                 .build();
+
+        new Methods().saveToTextFile(getActivity(),"--------------------------------");
+        new Methods().saveToTextFile(getActivity(),datelog);
+        new Methods().saveToTextFile(getActivity(),"Get Shift For User");
+        new Methods().saveToTextFile(getActivity(),request.toString());
+
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
-
+                new Methods().saveToTextFile(getActivity(), e.getMessage());
             }
 
             @Override
@@ -1196,9 +1201,11 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
                             getJobCardForUser();
                         }
                     }
+//                    new Methods().saveToTextFile(getActivity(), body);
+                    new Methods().saveToTextFile(getActivity(), String.valueOf(response.code()));
 
                 }else {
-
+                    new Methods().saveToTextFile(getActivity(), String.valueOf(response.code()));
                 }
 
             }
@@ -1226,7 +1233,7 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
                 @Override
                 public void onFailure(@NonNull Call call, @NonNull IOException e) {
                     e.printStackTrace();
-                    new Methods().saveToTextFile(getActivity(), e.getMessage() + "\n");
+                    new Methods().saveToTextFile(getActivity(), e.getMessage());
                 }
 
                 @Override
@@ -1252,7 +1259,7 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
                         });
 
                     } else {
-                        new Methods().saveToTextFile(getActivity(), response.code() + "\n");
+                        new Methods().saveToTextFile(getActivity(), String.valueOf(response.code()));
 
                     }
                 }
@@ -1270,26 +1277,39 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
         Request request = new Request.Builder()
                 .url(url)
                 .build();
+
+        new Methods().saveToTextFile(getActivity(), "--------------------------------");
+        new Methods().saveToTextFile(getActivity(), datelog );
+        new Methods().saveToTextFile(getActivity(), "Get JobCard For User");
+        new Methods().saveToTextFile(getActivity(), request.toString());
+
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
-
+                new Methods().saveToTextFile(getActivity(), e.getMessage());
             }
 
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                String body = response.body().string();
-                Log.d(TAG, "onResponse: get job" + body);
-                Gson gson = new Gson();
-                JobCard[] jobCards = gson.fromJson(body, JobCard[].class);
-                jobCardArrayList.addAll(Arrays.asList(jobCards));
-                for (JobCard jobCard : jobCardArrayList){
-                    if (jobCard.getJObCardNo().equals(mDetail.getJObCardNo())){
-                        mJobCard = jobCard;
-                        binding.buttonJobCard.setText(mJobCard.getJObCardNo());
-                        GetJobCardDetail();
+                if (response.isSuccessful()){
+                    String body = response.body().string();
+                    Log.d(TAG, "onResponse: get job" + body);
+                    Gson gson = new Gson();
+                    JobCard[] jobCards = gson.fromJson(body, JobCard[].class);
+                    jobCardArrayList.addAll(Arrays.asList(jobCards));
+                    for (JobCard jobCard : jobCardArrayList){
+                        if (jobCard.getJObCardNo().equals(mDetail.getJObCardNo())){
+                            mJobCard = jobCard;
+                            binding.buttonJobCard.setText(mJobCard.getJObCardNo());
+                            GetJobCardDetail();
+                        }
                     }
+//                    new Methods().saveToTextFile(getActivity(), body);
+                    new Methods().saveToTextFile(getActivity(), String.valueOf(response.code()));
+                }else {
+                    new Methods().saveToTextFile(getActivity(), String.valueOf(response.code()));
                 }
+
             }
         });
 
@@ -1310,7 +1330,7 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
                 @Override
                 public void onFailure(@NonNull Call call, @NonNull IOException e) {
                     e.printStackTrace();
-                    new Methods().saveToTextFile(getActivity(), e.getMessage() + "\n");
+                    new Methods().saveToTextFile(getActivity(), e.getMessage());
                 }
 
                 @Override
@@ -1848,6 +1868,9 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
     @Override
     public void onShiftSelected(Shift selectedShift) {
         this.mShift = selectedShift;
+
+        new Methods().saveToTextFile(getActivity(), "Selected Shift = "+selectedShift);
+
         SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
         Gson gson = new Gson();
@@ -1863,6 +1886,8 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
     @Override
     public void onLineSelected(Lines selectedLine) {
         this.mLines = selectedLine;
+
+        new Methods().saveToTextFile(getActivity(), "Selected Line = "+selectedLine);
 
         SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
@@ -1884,6 +1909,9 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
     @Override
     public void onJobCardSelected(JobCard jobCard) {
         this.mJobCard = jobCard;
+
+        new Methods().saveToTextFile(getActivity(), "Selected JobCard = "+jobCard);
+
         GetJobCardDetail();
         alertselectJobCard.dismiss();
 

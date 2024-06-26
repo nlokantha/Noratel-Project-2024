@@ -30,4 +30,13 @@ public class Detail implements Serializable {
     public void setLine(String line) {
         Line = line;
     }
+
+    @Override
+    public String toString() {
+        return "Detail{" +
+                "JObCardNo='" + JObCardNo + '\'' +
+                ", Shift='" + Shift + '\'' +
+                ", Line='" + Line + '\'' +
+                '}';
+    }
 }

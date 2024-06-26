@@ -56,15 +56,29 @@ public class LoginFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        client = new OkHttpClient.Builder()
+                .connectTimeout(10, TimeUnit.SECONDS)
+                .writeTimeout(10, TimeUnit.SECONDS)
+                .readTimeout(30, TimeUnit.SECONDS)
+                .build();
+
         binding.editTextUserName.setText("test");
         binding.editTextPassword.setText("test123");
         binding.editTextUserName.requestFocus();
 
         Date dates = new Date();
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm a");
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         date = formatter.format(dates);
 
 
+        binding.textViewVersion.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                Toast.makeText(getActivity(), "C3 Labs -LN", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+        });
 
         binding.buttonLogin.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -85,13 +99,6 @@ public class LoginFragment extends Fragment {
                 new Methods().saveToTextFile(getActivity(),date);
                 new Methods().saveToTextFile(getActivity(),"Login");
                 new Methods().saveToTextFile(getActivity(),request.toString());
-
-                client = new OkHttpClient.Builder()
-                        .connectTimeout(10, TimeUnit.SECONDS)
-                        .writeTimeout(10, TimeUnit.SECONDS)
-                        .readTimeout(30, TimeUnit.SECONDS)
-                        .build();
-
                 client.newCall(request).enqueue(new Callback() {
                     @Override
                     public void onFailure(@NonNull Call call, @NonNull IOException e) {
@@ -99,7 +106,6 @@ public class LoginFragment extends Fragment {
                         new Methods().saveToTextFile(getActivity(),e.getMessage());
                         new Methods().saveToTextFile(getActivity(),e.toString());
                     }
-
                     @Override
                     public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                         if (response.isSuccessful()) {
@@ -124,16 +130,10 @@ public class LoginFragment extends Fragment {
                                         mListener.authSuccessful(user);
                                     }
                                 });
-
                             }
-
                         } else {
                             Log.d(TAG, "onResponse: " + response.code());
-                            String body = response.body().string();
-                            Log.d(TAG, "onResponse: login Response "+body);
-                            new Methods().saveToTextFile(getActivity(),body);
                             new Methods().saveToTextFile(getActivity(), String.valueOf(response.code()));
-
                         }
                     }
                 });
@@ -207,16 +207,12 @@ public class LoginFragment extends Fragment {
             }
         });
     }
-
-
     LoginFragmentListener mListener;
-
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         mListener = (LoginFragmentListener) context;
     }
-
     public interface LoginFragmentListener {
         void authSuccessful(User user);
     }
