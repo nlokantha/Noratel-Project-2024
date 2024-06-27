@@ -469,7 +469,12 @@ public class HomeFragment extends Fragment implements SelectShiftAdapter.OnShift
             @Override
             public void onClick(View v) {
                 search = editTextSearch.getText().toString().trim();
-                handleSearch(search);
+                if (!search.isEmpty()){
+                    handleSearch(search);
+                }else {
+                    progressBarSearchJobCard.setVisibility(View.VISIBLE);
+                    getJobCard();
+                }
             }
         });
     }
