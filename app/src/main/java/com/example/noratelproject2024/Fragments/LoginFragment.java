@@ -63,8 +63,8 @@ public class LoginFragment extends Fragment {
                 .readTimeout(30, TimeUnit.SECONDS)
                 .build();
 
-        binding.editTextUserName.setText("test");
-        binding.editTextPassword.setText("test123");
+        binding.editTextUserName.setText("test1");
+        binding.editTextPassword.setText("test1");
         binding.editTextUserName.requestFocus();
 
         Date dates = new Date();
